@@ -1,22 +1,39 @@
 import { supabase } from "../supabaseClient";
 
 class UserRepository {
+  async fetchAllUser() {
+    const { data: users, error } = await supabase
+      .from("user")
+      .select("* , point(*)")
+      .gt("point.expiredAt", new Date().toISOString())
+      .order("createdAt", { ascending: true });
+
+    if (error) throw new Error(error.message);
+
+    return users;
+  }
+
   // 총회원수.
   async fetchTotalUser() {
     const { count, error } = await supabase.from("user").select("*", { count: "exact" });
 
     if (error) throw new Error(error.message);
 
-    console.log(count);
     return count;
   }
 
-  async fetchUsersByPagination(page = 1) {
+  async fetchUsersByPagination(pageNum = 1) {
+    let page = (Number(pageNum) - 1) * 20;
+
+    if (page < 0) page = 0;
+
     const { data: users, error } = await supabase
       .from("user")
-      .select("*, point(*)")
+      .select("* , point(*)")
+      .gt("point.expiredAt", new Date().toISOString())
       .order("createdAt", { ascending: true })
       .range(page, page + 19);
+
     if (error) throw new Error(error.message);
 
     return users;

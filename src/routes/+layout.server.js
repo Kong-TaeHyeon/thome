@@ -9,7 +9,6 @@ export const load = async ({ locals, url }) => {
   }
 
   if (url.pathname == "/auth") {
-    console.log("작동2");
     if (userRole === "ADMIN") throw redirect(301, "/");
   }
 };

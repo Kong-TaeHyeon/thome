@@ -1,9 +1,10 @@
 import userRepository from "../../lib/repository/userRepository";
 
-export const load = async () => {
-  const users = await userRepository.fetchUsersByPagination();
+export const load = async ({ url }) => {
+  const pageNum = url.searchParams.get("pageNum") || 1;
 
-  console.log(users[19].point);
+  const users = await userRepository.fetchUsersByPagination(pageNum);
+  const totalUserCount = await userRepository.fetchTotalUser();
 
-  return { users };
+  return { users, totalUserCount };
 };

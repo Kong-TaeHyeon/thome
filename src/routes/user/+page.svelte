@@ -1,6 +1,104 @@
 <script>
+  import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
+  import { json } from "@sveltejs/kit";
+  import { utils, writeFile } from "xlsx";
+
   export let data;
-  const { users } = data;
+  const { users, totalUserCount } = data;
+
+  $: pageNum = $page.url.searchParams.get("pageNum") || 1;
+
+  let selectedUsers = [];
+  let isAllSelected = false;
+
+  const allUserDownload = async () => {
+    const data = [["NickName", "Email", "BirthDay", "Gender", "SkinType", "Thome Index", "DN", "Quiz"]];
+
+    const response = await fetch("/user");
+    const users = await response.json();
+
+    console.log(users);
+
+    users.forEach((user) => {
+      console.log(user.point);
+      if (user.point.length === 0) {
+        const arr = [
+          user.nickname,
+          user.email,
+          user.birthday,
+          user.gender,
+          user.skinType,
+          user.thomeIndex,
+          0,
+          user.isQuizCompleted,
+        ];
+
+        data.push(arr);
+      } else {
+        const arr = [
+          user.nickname,
+          user.email,
+          user.birthday,
+          user.gender,
+          user.skinType,
+          user.thomeIndex,
+          user.point.reduce((acc, cur) => (acc += cur.point), 0),
+          user.isQuizCompleted,
+        ];
+        data.push(arr);
+      }
+    });
+
+    const ws = utils.aoa_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Sheet1");
+
+    writeFile(wb, "data.xlsx");
+  };
+
+  const selectedUserDownload = async () => {
+    const data = [["NickName", "Email", "BirthDay", "Gender", "SkinType", "Thome Index", "DN", "Quiz"]];
+
+    selectedUsers.forEach((user) => {
+      const arr = [
+        user.nickname,
+        user.email,
+        user.birthday,
+        user.gender,
+        user.skinType,
+        user.thomeIndex,
+        user.point.reduce((acc, cur) => (acc += cur.point), 0),
+        user.isQuizCompleted,
+      ];
+
+      data.push(arr);
+    });
+
+    const ws = utils.aoa_to_sheet(data);
+    const wb = utils.book_new();
+    utils.book_append_sheet(wb, ws, "Sheet1");
+
+    writeFile(wb, "data.xlsx");
+  };
+
+  function toggleUserSelection(idx) {
+    if (selectedUsers.includes(idx)) {
+      selectedUsers = selectedUsers.filter((selectedIdx) => selectedIdx !== idx);
+    } else {
+      selectedUsers = [...selectedUsers, idx];
+    }
+  }
+
+  function toggleSelectAll() {
+    if (!isAllSelected) {
+      selectedUsers = users;
+      isAllSelected = true;
+    } else {
+      selectedUsers = [];
+      isAllSelected = false;
+    }
+  }
 </script>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -17,10 +115,10 @@
         <th scope="col" class="p-4">
           <div class="flex items-center">
             <input
-              id="checkbox-all-search"
+              checked={isAllSelected}
+              on:change={toggleSelectAll}
               type="checkbox"
               class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800" />
-            <label for="checkbox-all-search" class="sr-only">checkbox</label>
           </div>
         </th>
         <th scope="col" class="px-6 py-3"> Index </th>
@@ -39,15 +137,15 @@
           <td class="w-4 p-4">
             <div class="flex items-center">
               <input
-                id="checkbox-table-search-1"
+                on:click={() => toggleUserSelection(user)}
+                checked={selectedUsers.some((selectedUser) => selectedUser.id === user.id)}
                 type="checkbox"
                 class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-blue-600 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800" />
-              <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
             </div>
           </td>
-          <td class="px-6 py-4"> {idx + 1} </td>
+          <td class="px-6 py-4"> {20 * (pageNum - 1) + idx + 1} </td>
           <th scope="row" class="flex items-center whitespace-nowrap px-6 py-4 text-gray-900 dark:text-white">
-            <img class="h-10 w-10 rounded-full" src={user.profileImageUrl} alt="Jese image" />
+            <img class="h-10 w-10 rounded-full" src={user.profileImageUrl} alt="profile" />
             <div class="ps-3">
               <div class="text-base font-semibold">{user.nickname}</div>
               <div class="font-normal text-gray-500">{user.email}</div>
@@ -58,10 +156,55 @@
           <td class="px-6 py-4"> {user.gender || ""} </td>
           <td class="px-6 py-4"> {user.skinType || ""} </td>
           <td class="px-6 py-4"> {user.thomeIndex || ""} </td>
-          <td class="px-6 py-4"> 가져와야해! </td>
+
+          {#if user.point.length !== 0}
+            <td class="px-6 py-4"> {user.point.reduce((acc, cur) => (acc += cur.point), 0)} </td>
+          {:else}
+            <td class="px-6 py-4"> 0 </td>
+          {/if}
           <td class="px-6 py-4"> {user.isQuizCompleted || ""} </td>
         </tr>
       {/each}
     </tbody>
   </table>
+
+  {#if totalUserCount > 0 && !isNaN(Number(pageNum))}
+    <div class="my-3 flex w-full justify-center gap-4">
+      <button
+        type="button"
+        class="mr-4 cursor-pointer"
+        disabled={Number(pageNum) === 1}
+        on:click={() => {
+          let url = new URL($page.url.href);
+          url.searchParams.set("pageNum", 1);
+          return goto("/").then(() => {
+            goto(url);
+          });
+        }}>«</button>
+      {#if Number(pageNum) !== 1}
+        <button
+          type="button"
+          on:click={() => {
+            window.location.href = `/user?pageNum=${Number(pageNum) - 1}`;
+          }}>{Number(pageNum) - 1}</button>
+      {/if}
+      <button class="font-bold text-primary underline">{Number(pageNum)}</button>
+      {#if Number(pageNum) < Math.ceil(totalUserCount / 20)}
+        <button
+          type="button"
+          on:click={() => {
+            window.location.href = `/user?pageNum=${Number(pageNum) + 1}`;
+          }}>{Number(pageNum) + 1}</button>
+      {/if}
+      <button
+        class="ml-4 cursor-pointer"
+        disabled={Number(pageNum) >= Math.ceil(totalUserCount / 20)}
+        on:click={() => {
+          window.location.href = `/user?pageNum=${Math.ceil(totalUserCount / 20)}`;
+        }}>»</button>
+    </div>
+  {/if}
+
+  <button on:click={selectedUserDownload}>선택한 User Excel 파일 다운로드</button>
+  <button on:click={allUserDownload}>전체 User Excel 파일 다운로드</button>
 </div>

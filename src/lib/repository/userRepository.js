@@ -71,6 +71,31 @@ class UserRepository {
 
     return { weekCount, monthCount };
   }
+
+  // 유저 한명의 세부 정보
+  async fetchUserByUserId(userId) {
+    const { data: user, error: userErr } = await supabase
+      .from("user")
+      .select("*, contact(*), inviteUser!fromUserId(*)")
+      .eq("id", userId)
+      .order("createdAt", {
+        foreignTable: "contact",
+        ascending: false,
+      })
+      .maybeSingle();
+
+    if (userErr) throw new Error("fetch User Error : ", userErr);
+
+    // 초대 목록
+    const { data: inviteUser, error: inviteErr } = await supabase
+      .from("inviteUser")
+      .select("*, user!userId(email)")
+      .eq("fromUserId", userId);
+
+    if (inviteErr) throw new Error("fetch Invite User Error : ", inviteErr);
+
+    return { user, inviteUser };
+  }
 }
 
 export default new UserRepository();

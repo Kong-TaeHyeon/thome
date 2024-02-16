@@ -12,16 +12,17 @@
   let selectedUsers = [];
   let isAllSelected = false;
 
+  const goUser = (userId) => {
+    goto(`/user/${userId}`);
+  };
+
   const allUserDownload = async () => {
     const data = [["NickName", "Email", "BirthDay", "Gender", "SkinType", "Thome Index", "DN", "Quiz"]];
 
     const response = await fetch("/user");
     const users = await response.json();
 
-    console.log(users);
-
     users.forEach((user) => {
-      console.log(user.point);
       if (user.point.length === 0) {
         const arr = [
           user.nickname,
@@ -144,18 +145,27 @@
             </div>
           </td>
           <td class="px-6 py-4"> {20 * (pageNum - 1) + idx + 1} </td>
-          <th scope="row" class="flex items-center whitespace-nowrap px-6 py-4 text-gray-900 dark:text-white">
-            <img class="h-10 w-10 rounded-full" src={user.profileImageUrl} alt="profile" />
-            <div class="ps-3">
+          <th
+            on:click={() => goUser(user.id)}
+            scope="row"
+            class="flex items-center whitespace-nowrap px-6 py-4 text-gray-900 dark:text-white">
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+            <img
+              on:click={() => goUser(user.id)}
+              class="h-10 w-10 rounded-full"
+              src={user.profileImageUrl}
+              alt="profile" />
+            <div on:click={() => goUser(user.id)} class="ps-3">
               <div class="text-base font-semibold">{user.nickname}</div>
               <div class="font-normal text-gray-500">{user.email}</div>
             </div>
           </th>
 
-          <td class="px-6 py-4"> {user.birthday || ""} </td>
-          <td class="px-6 py-4"> {user.gender || ""} </td>
-          <td class="px-6 py-4"> {user.skinType || ""} </td>
-          <td class="px-6 py-4"> {user.thomeIndex || ""} </td>
+          <td on:click={() => goUser(user.id)} class="px-6 py-4"> {user.birthday || ""} </td>
+          <td on:click={() => goUser(user.id)} class="px-6 py-4"> {user.gender || ""} </td>
+          <td on:click={() => goUser(user.id)} class="px-6 py-4"> {user.skinType || ""} </td>
+          <td on:click={() => goUser(user.id)} class="px-6 py-4"> {user.thomeIndex || ""} </td>
 
           {#if user.point.length !== 0}
             <td class="px-6 py-4"> {user.point.reduce((acc, cur) => (acc += cur.point), 0)} </td>
@@ -205,6 +215,14 @@
     </div>
   {/if}
 
-  <button on:click={selectedUserDownload}>선택한 User Excel 파일 다운로드</button>
-  <button on:click={allUserDownload}>전체 User Excel 파일 다운로드</button>
+  <button
+    on:click={selectedUserDownload}
+    type="button"
+    class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+    >선택한 User Excel 파일 다운로드</button>
+  <button
+    on:click={allUserDownload}
+    type="button"
+    class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+    >전체 User Excel 파일 다운로드</button>
 </div>

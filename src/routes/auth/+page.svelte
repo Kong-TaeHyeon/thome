@@ -7,7 +7,6 @@
   const submitForm = async ({ formData, cancel }) => {
     formData.append("email", email);
     formData.append("password", password);
-
     return;
   };
 </script>

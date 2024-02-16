@@ -29,8 +29,12 @@
   <div class="mb-8 h-[200px] w-[800px] items-center justify-center">
     <p class="mb-2 text-lg font-bold">Goods</p>
     <div class="mb-2">
+      {#if goods?.imageUrl}
+        <img class="mr-2 h-12 w-12 rounded-full" alt="profile" src={goods?.imageUrl} />
+      {/if}
       <p>Goods Name: {goods?.name}</p>
     </div>
+    <p>Goods Price: {goods?.price}</p>
     <p>Goods Description: {goods?.description}</p>
   </div>
 </div>

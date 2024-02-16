@@ -116,7 +116,7 @@
   <button
     type="button"
     class="ml-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-    >Coupon Create</button>
+    on:click={() => goto("/coupon/new")}>Coupon Create</button>
 
   <button
     type="button"
@@ -134,6 +134,7 @@
         <th>Coupon Code</th>
         <th>User</th>
         <th>Goods</th>
+        <th>Price</th>
         <th>CreatedAt</th>
       </tr>
     </thead>
@@ -149,6 +150,7 @@
           <td on:click={() => goCoupon(coupon)}>{coupon.code}</td>
           <td on:click={() => goCoupon(coupon)}>{coupon.user?.nickname || ""}</td>
           <td on:click={() => goCoupon(coupon)}>{coupon.goods?.name}</td>
+          <td on:click={() => goCoupon(coupon)}>{coupon.goods?.price}</td>
           <td on:click={() => goCoupon(coupon)}
             >{coupon.createdAt ? new Date(coupon.createdAt).toLocaleString() : ""}</td>
         </tr>
@@ -163,21 +165,13 @@
         class="mr-4 cursor-pointer"
         disabled={Number(pageNum) === 1}
         on:click={() => {
-          let url = new URL($page.url.href);
-          url.searchParams.set("pageNum", 1);
-          return goto("/").then(() => {
-            goto(url);
-          });
+          window.location.href = `/coupon?pageNum=1`;
         }}>«</button>
       {#if Number(pageNum) !== 1}
         <button
           type="button"
           on:click={() => {
-            let url = new URL($page.url.href);
-            url.searchParams.set("pageNum", Number(pageNum) - 1);
-            return goto("/").then(() => {
-              goto(url);
-            });
+            window.location.href = `/coupon?pageNum=${Number(pageNum) - 1}`;
           }}>{Number(pageNum) - 1}</button>
       {/if}
       <button class="font-bold text-primary underline">{Number(pageNum)}</button>
@@ -185,22 +179,14 @@
         <button
           type="button"
           on:click={() => {
-            let url = new URL($page.url.href);
-            url.searchParams.set("pageNum", Number(pageNum) + 1);
-            return goto("/").then(() => {
-              goto(url);
-            });
+            window.location.href = `/coupon?pageNum=${Number(pageNum) + 1}`;
           }}>{Number(pageNum) + 1}</button>
       {/if}
       <button
         class="ml-4 cursor-pointer"
         disabled={Number(pageNum) >= Math.ceil(totalCouponCount / 20)}
         on:click={() => {
-          let url = new URL($page.url.href);
-          url.searchParams.set("pageNum", Math.ceil(totalCouponCount / 20));
-          return goto("/").then(() => {
-            goto(url);
-          });
+          window.location.href = `/coupon?pageNum=${Math.ceil(totalCouponCount / 20)}`;
         }}>»</button>
     </div>
   {/if}

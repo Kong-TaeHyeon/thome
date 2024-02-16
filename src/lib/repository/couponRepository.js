@@ -30,7 +30,7 @@ class CouponRepository {
 
     const { data: coupon, error } = await supabase
       .from("coupon")
-      .select("*, goods(name), user(nickname)")
+      .select("*, goods(name,price), user(nickname)")
       .is("deletedAt", null)
       .order("createdAt", { ascending: true })
       .range(page, page + 19);

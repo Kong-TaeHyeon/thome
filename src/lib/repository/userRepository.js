@@ -76,8 +76,9 @@ class UserRepository {
   async fetchUserByUserId(userId) {
     const { data: user, error: userErr } = await supabase
       .from("user")
-      .select("*, contact(*), inviteUser!fromUserId(*)")
+      .select("*, point(*),contact(*), inviteUser!fromUserId(*)")
       .eq("id", userId)
+      .gt("point.expiredAt", new Date().toISOString())
       .order("createdAt", {
         foreignTable: "contact",
         ascending: false,

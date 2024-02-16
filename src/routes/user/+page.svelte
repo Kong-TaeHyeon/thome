@@ -156,6 +156,8 @@
               class="h-10 w-10 rounded-full"
               src={user.profileImageUrl}
               alt="profile" />
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div on:click={() => goUser(user.id)} class="ps-3">
               <div class="text-base font-semibold">{user.nickname}</div>
               <div class="font-normal text-gray-500">{user.email}</div>

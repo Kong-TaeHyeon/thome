@@ -1,5 +1,4 @@
 import { redirect } from "@sveltejs/kit";
-import { supabase } from "../lib/supabaseClient.js";
 
 export const load = async ({ locals, url }) => {
   let userRole = locals?.userRole;

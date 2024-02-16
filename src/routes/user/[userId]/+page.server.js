@@ -1,3 +1,4 @@
+import pointRepository from "../../../lib/repository/pointRepository.js";
 import userRepository from "../../../lib/repository/userRepository.js";
 import { supabase } from "../../../lib/supabaseClient.js";
 
@@ -5,8 +6,10 @@ export const load = async ({ params }) => {
   const userId = params.userId;
 
   const { user, inviteUser } = await userRepository.fetchUserByUserId(userId);
+  const { rangePoint } = await pointRepository.fetchRangePointByUserId(userId);
+  const calRangePoint = rangePoint.reduce((acc, cur) => (acc += cur.point), 0);
 
-  return { user, inviteUser };
+  return { user, inviteUser, calRangePoint };
 };
 
 export const actions = {

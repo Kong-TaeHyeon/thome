@@ -37,6 +37,30 @@ class PointRepository {
 
     return { weekPoints, monthPoints };
   }
+
+  // 기간 적립 DN
+  async fetchRangePointByUserId(userId) {
+    let date = new Date();
+
+    const day = date.getDate();
+    const month = date.getMonth();
+    const year = date.getFullYear();
+
+    // 6개월 전 날짜
+    let sixMonthAgo = new Date(year, month - 6, day);
+    const { data: rangePoint, error: err } = await supabase
+      .from("point")
+      .select("point")
+      .eq("userId", userId)
+      .gt("point", 0)
+      .gte("createdAt", sixMonthAgo.toISOString());
+
+    console.log(rangePoint);
+
+    if (err) throw new Error("fetch Range Point : ", err.message);
+
+    return { rangePoint };
+  }
 }
 
 export default new PointRepository();

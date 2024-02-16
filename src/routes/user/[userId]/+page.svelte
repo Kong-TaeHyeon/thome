@@ -4,7 +4,7 @@
 
   export let data;
 
-  const { user, inviteUser } = data;
+  const { user, inviteUser, calRangePoint } = data;
 
   const handleReTouch = ({ formData }) => {
     formData.append("id", user.id);
@@ -54,13 +54,17 @@
       </div>
 
       <div class="m-2">
-        <p class="font-bold">잔여 DN</p>
-        <p>200</p>
+        <p class="font-bold">적립 DN</p>
+        {#if user.point.length !== 0}
+          <p>{user.point.reduce((acc, cur) => (acc += cur.point), 0)}</p>
+        {:else}
+          <p>0</p>
+        {/if}
       </div>
 
       <div class="m-2">
         <p class="font-bold">기간 적립 DN</p>
-        <p>200</p>
+        <p>{calRangePoint}</p>
       </div>
     </div>
 
@@ -89,6 +93,93 @@
 
     <button class="mt-5 w-20 border-2" on:click={() => goto("/user")}>목록보기</button>
   </form>
+
+  <div class="flex flex-row">
+    <p class="mt-4 text-lg font-bold">톰 데이 내역</p>
+  </div>
+  <div class="relative">
+    <table class="w-full table-auto text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"> 일시 </th>
+          <th scope="col" class="px-6 py-3"> 프로그램 </th>
+          <th scope="col" class="px-6 py-3"> 회차 </th>
+          <!-- <th scope="col" class="px-6 py-3"> 적립 DN </th> -->
+        </tr>
+      </thead>
+      <tbody>
+        {#each user.schedule as schedule, idx}
+          <tr class="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <th scope="row" class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
+              {schedule.createdAt ? new Date(schedule.createdAt).toLocaleString() : ""}
+            </th>
+            <td class="px-6 py-4"> {schedule.program.name} </td>
+            <td class="px-6 py-4"> {idx} </td>
+            <!-- <td class="px-6 py-4"> 적립금 </td> -->
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex flex-row">
+    <p class="mt-4 text-lg font-bold">톰 머치 쿠폰 구매 내역</p>
+  </div>
+  <div class="relative">
+    <table class="w-full table-auto text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"> 일시 </th>
+          <th scope="col" class="px-6 py-3"> 쿠폰 코드 </th>
+          <th scope="col" class="px-6 py-3"> 가격 </th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each user.coupon as coupon, idx}
+          <tr class="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <th scope="row" class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
+              {coupon.createdAt ? new Date(coupon.createdAt).toLocaleString() : ""}
+            </th>
+            <td class="px-6 py-4"> {coupon.code} </td>
+            <td class="px-6 py-4"> {coupon.goods.price} </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex flex-row">
+    <p class="mt-4 text-lg font-bold">톰 셀피 기록</p>
+  </div>
+  <div class="relative">
+    <table class="w-full table-auto text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
+      <thead class="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" class="px-6 py-3"> 일시 </th>
+          <th scope="col" class="px-6 py-3"> 프로그램 </th>
+          <th scope="col" class="px-6 py-3"> Before </th>
+          <th scope="col" class="px-6 py-3"> After </th>
+        </tr>
+      </thead>
+      <tbody>
+        {#each user.record as record, idx}
+          <tr class="border-b bg-white dark:border-gray-700 dark:bg-gray-800">
+            <th scope="row" class="whitespace-nowrap px-6 py-4 font-medium text-gray-900 dark:text-white">
+              {record.createdAt ? new Date(record.createdAt).toLocaleString() : ""}
+            </th>
+            <td class="px-6 py-4"> {record.schedule.program.name} </td>
+            <td class="px-6 py-4">
+              <img class="mr-2 h-12 w-12 rounded-full" alt="profile" src={record?.beforeUrl} />
+            </td>
+
+            <td class="px-6 py-4">
+              <img class="mr-2 h-12 w-12 rounded-full" alt="profile" src={record?.afterUrl} />
+            </td>
+          </tr>
+        {/each}
+      </tbody>
+    </table>
+  </div>
 
   <div class="flex flex-row">
     <p class="mt-4 text-lg font-bold">1:1 문의 내역</p>

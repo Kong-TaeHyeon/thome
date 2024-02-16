@@ -76,16 +76,21 @@ class UserRepository {
   async fetchUserByUserId(userId) {
     const { data: user, error: userErr } = await supabase
       .from("user")
-      .select("*, point(*),contact(*), inviteUser!fromUserId(*)")
+      .select(
+        "*, point(*),contact(*), schedule(*, program(*)), coupon(*, goods(*)), record(*,schedule(program(*))),inviteUser!fromUserId(*)",
+      )
       .eq("id", userId)
       .gt("point.expiredAt", new Date().toISOString())
       .order("createdAt", {
         foreignTable: "contact",
         ascending: false,
       })
+      .limit(4, {
+        foreignTable: "contact",
+      })
       .maybeSingle();
 
-    if (userErr) throw new Error("fetch User Error : ", userErr);
+    if (userErr) throw new Error("fetch User Error : ", userErr.message);
 
     // 초대 목록
     const { data: inviteUser, error: inviteErr } = await supabase

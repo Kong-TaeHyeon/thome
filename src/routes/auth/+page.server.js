@@ -1,3 +1,4 @@
+import { json } from "@sveltejs/kit";
 import { supabase } from "../../lib/supabaseClient.js";
 
 export const load = async () => {};
@@ -39,6 +40,7 @@ export const actions = {
         email,
         password,
       });
+      return "success";
     } catch (err) {
       console.error("Auth Error : ", err);
     }

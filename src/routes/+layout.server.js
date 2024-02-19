@@ -10,4 +10,6 @@ export const load = async ({ locals, url }) => {
   if (url.pathname == "/auth") {
     if (userRole === "ADMIN") throw redirect(301, "/");
   }
+
+  return { userRole };
 };

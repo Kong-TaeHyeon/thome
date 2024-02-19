@@ -55,8 +55,6 @@ class PointRepository {
       .gt("point", 0)
       .gte("createdAt", sixMonthAgo.toISOString());
 
-    console.log(rangePoint);
-
     if (err) throw new Error("fetch Range Point : ", err.message);
 
     return { rangePoint };

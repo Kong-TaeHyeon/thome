@@ -85,9 +85,6 @@ class UserRepository {
         foreignTable: "contact",
         ascending: false,
       })
-      .limit(4, {
-        foreignTable: "contact",
-      })
       .maybeSingle();
 
     if (userErr) throw new Error("fetch User Error : ", userErr.message);

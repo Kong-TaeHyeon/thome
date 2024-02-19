@@ -1,10 +1,90 @@
 <script>
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+  import { utils, writeFile } from "xlsx";
 
   export let data;
 
   const { user, inviteUser, calRangePoint } = data;
+
+  const userInfoDownload = async () => {
+    const userInfo = [
+      ["NickName", "Email", "BirthDay", "Gender", "SkinType", "Thome Index", "DN", "기간적립 DN", "Quiz"],
+    ];
+
+    userInfo.push([
+      user.nickname,
+      user.email,
+      user.birthday,
+      user.gender,
+      user.skinType,
+      user.thomeIndex,
+      user.point.reduce((acc, cur) => (acc += cur.point), 0),
+      calRangePoint,
+      user.isQuizCompleted,
+    ]);
+
+    const wb = utils.book_new();
+    let ws = utils.aoa_to_sheet(userInfo);
+    utils.book_append_sheet(wb, ws, "User Basic Info");
+
+    const thomeDay = [["일시", "프로그램"]];
+
+    user.schedule.forEach((err) => {
+      const schedule = [err.createdAt ? new Date(err.createdAt).toLocaleString() : "", err.program.name];
+      thomeDay.push(schedule);
+    });
+
+    ws = utils.aoa_to_sheet(thomeDay);
+    utils.book_append_sheet(wb, ws, "Thome Day Log");
+
+    const coupon = [["일시", "쿠폰 코드", "가격"]];
+    user.coupon.forEach((err) => {
+      coupon.push([err.createdAt ? new Date(err.createdAt).toLocaleString() : "", err.code, err.goods.price]);
+    });
+
+    ws = utils.aoa_to_sheet(coupon);
+    utils.book_append_sheet(wb, ws, "Thome Coupon Log");
+
+    const record = [["일시", "프로그램", "Before", "After"]];
+    user.record?.forEach((err) => {
+      record.push([
+        err.createdAt ? new Date(err.createdAt).toLocaleString() : "",
+        err?.schedule.program.name,
+        err?.beforeUrl,
+        err?.afterUrl,
+      ]);
+    });
+
+    ws = utils.aoa_to_sheet(record);
+    utils.book_append_sheet(wb, ws, "Thome Record(셀피) Log");
+
+    const contact = [["일시", "분류", "문의 내용", "답변 내용", "처리"]];
+
+    console.log(user.contact);
+    user.contact.forEach((err) => {
+      contact.push([
+        err.createdAt ? new Date(err.createdAt).toLocaleString() : "",
+        err?.type || "Null",
+        err?.question || "Null",
+        err?.answer || "Null",
+        err?.status || "Null",
+      ]);
+    });
+
+    ws = utils.aoa_to_sheet(contact);
+    utils.book_append_sheet(wb, ws, "Contact Log");
+
+    const invites = [["일시", "가입 계정"]];
+    inviteUser.forEach((invite) => {
+      invites.push([invite.createdAt ? new Date(invite.createdAt).toLocaleString() : "", invite.user.email]);
+    });
+
+    ws = utils.aoa_to_sheet(invites);
+    utils.book_append_sheet(wb, ws, "Invite Log");
+
+    writeFile(wb, "user.xlsx");
+  };
 
   const handleReTouch = ({ formData }) => {
     formData.append("id", user.id);
@@ -90,11 +170,11 @@
   </div>
   <form method="post" action="?/save" use:enhance={handleReTouch}>
     <button type="submit" formaction="?/save" class="mt-5 w-20 border-2">저장하기</button>
-
+    <button type="button" on:click={userInfoDownload} class="mt-5 w-20 border-2">다운로드</button>
     <button class="mt-5 w-20 border-2" on:click={() => goto("/user")}>목록보기</button>
   </form>
 
-  <div class="flex flex-row">
+  <div class="mb-2 flex flex-row">
     <p class="mt-4 text-lg font-bold">톰 데이 내역</p>
   </div>
   <div class="relative">
@@ -103,8 +183,6 @@
         <tr>
           <th scope="col" class="px-6 py-3"> 일시 </th>
           <th scope="col" class="px-6 py-3"> 프로그램 </th>
-          <th scope="col" class="px-6 py-3"> 회차 </th>
-          <!-- <th scope="col" class="px-6 py-3"> 적립 DN </th> -->
         </tr>
       </thead>
       <tbody>
@@ -114,8 +192,6 @@
               {schedule.createdAt ? new Date(schedule.createdAt).toLocaleString() : ""}
             </th>
             <td class="px-6 py-4"> {schedule.program.name} </td>
-            <td class="px-6 py-4"> {idx} </td>
-            <!-- <td class="px-6 py-4"> 적립금 </td> -->
           </tr>
         {/each}
       </tbody>
@@ -183,7 +259,6 @@
 
   <div class="flex flex-row">
     <p class="mt-4 text-lg font-bold">1:1 문의 내역</p>
-    <!-- <button class="ml-2 mt-4 w-20 rounded border text-lg font-bold hover:bg-blue-700">더보기</button> -->
   </div>
 
   <div class="relative">

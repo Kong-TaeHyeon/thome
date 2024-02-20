@@ -32,6 +32,7 @@
           <option value="all">Status (All)</option>
           <option value="COMPLETED">Status (Completed)</option>
           <option value="PENDING">Status (Pending)</option>
+          <option value="ISSUE">Status (ISSUE)</option>
         </select>
       </th>
     </tr>

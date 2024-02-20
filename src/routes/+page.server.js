@@ -9,7 +9,7 @@ export const load = async () => {
   const { weekPoints, monthPoints } = await pointRepository.fetchPointWeek();
   const totalUser = await userRepository.fetchTotalUser();
   const { weekCount, monthCount } = await userRepository.fetchNewUser();
-  const { weekContact, monthContact, pendingContact } = await contactRepository.fetchContactBundle();
+  const { weekContact, monthContact, pendingContact, issueContact } = await contactRepository.fetchContactBundle();
 
   for (let weekPoint of weekPoints) {
     totalWeekPoint += weekPoint.point;
@@ -28,5 +28,6 @@ export const load = async () => {
     totalUser,
     totalWeekPoint,
     totalMonthPoint,
+    issueContact,
   };
 };

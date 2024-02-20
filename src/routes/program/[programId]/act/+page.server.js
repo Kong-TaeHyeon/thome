@@ -55,7 +55,6 @@ export const actions = {
     const { error: deleteErr } = await supabase.from("act").delete().eq("programId", params.programId);
     const { error: insertErr } = await supabase.from("act").insert(actList);
 
-    console.log(insertErr);
     if (deleteErr) throw new Error(deleteErr.message);
     if (insertErr) throw new Error(insertErr.message);
 

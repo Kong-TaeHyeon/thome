@@ -18,6 +18,8 @@ export const actions = {
   save: async ({ request, params }) => {
     const product = await request.formData();
 
+    console.log(product);
+
     // 기본 정보.
     const basicInfo = {
       name: product.get("name"),

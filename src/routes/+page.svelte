@@ -2,6 +2,7 @@
   export let data;
 
   const {
+    issueContact,
     weekContact,
     monthContact,
     pendingContact,
@@ -79,6 +80,11 @@
           <tr>
             <td class="font-bold">미완료</td>
             <td class="text-red-300">{pendingContact}</td>
+          </tr>
+          <hr class="my-2 border-gray-300" />
+          <tr>
+            <td class="font-bold">이슈</td>
+            <td class="text-red-300">{issueContact}</td>
           </tr>
         </table>
       </td>

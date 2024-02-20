@@ -81,7 +81,14 @@ class ContactRepository {
 
     if (err3) throw new Error(err3.message);
 
-    return { weekContact, monthContact, pendingContact };
+    // 미완료한 문의
+    const { count: issueContact, error: err4 } = await supabase
+      .from("contact")
+      .select("*", { count: "exact" })
+      .eq("status", "ISSUE");
+    if (err3) throw new Error(err3.message);
+
+    return { weekContact, monthContact, pendingContact, issueContact };
   }
 }
 

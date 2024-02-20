@@ -45,6 +45,7 @@
         <select bind:value={selectedStatus}>
           <option value="PENDING">PENDING</option>
           <option value="COMPLETED">COMPLETED</option>
+          <option value="ISSUE">ISSUE</option>
         </select>
       </div>
     </div>

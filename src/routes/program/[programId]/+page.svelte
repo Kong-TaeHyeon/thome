@@ -80,7 +80,7 @@
       formData.append("bannerComingSoonImage", "no");
     } else {
       // Image 를 수정하지 않는 것.
-      if (bannerImage.imageFile === null) {
+      if (bannerComingSoonImage.imageFile === null) {
         formData.append("bannerComingSoonImage", "url");
         formData.append("bannerComingSoonImageUrl", program.bannerImageUrlComingSoon);
       } else {
@@ -95,13 +95,14 @@
       // Image 를 수정하지 않는 것.
       if (productImage.imageFile === null) {
         formData.append("productImage", "url");
-        formData.append("productImageUrl", program.bannerImageUrl);
+        formData.append("productImageUrl", program.productImageUrl);
       } else {
         // Image 를 새로 업로드해야 함.
         formData.append("productImage", "file");
-        formData.append("productImageFile", bannerImage.imageFile);
+        formData.append("productImageFile", productImage.imageFile);
       }
     }
+
     return ({ result }) => {
       if (result.data === "Success") {
         alert("업데이트 완료.");

@@ -4,16 +4,13 @@ import { supabase } from "../../lib/supabaseClient.js";
 export const load = async () => {};
 
 export const actions = {
-  /**
-   * 로그인 / 회원가입 alert 를 위한 로직 추가하기.
-   */
-
   signUp: async ({ request }) => {
     try {
       const data = await request.formData();
 
       const email = data.get("email");
       const password = data.get("password");
+      const name = data.get("name");
 
       const { data: user, error: err } = await supabase.auth.signUp({
         email,
@@ -24,10 +21,24 @@ export const actions = {
           },
         },
       });
+
+      if (err) throw new Error(err.message);
+
+      const { error } = await supabase.from("admin").insert({
+        name,
+        email,
+      });
+      if (error) throw new Error(err.message);
+      return "success";
     } catch (err) {
       console.error("Auth  Error : ", err);
+      return "fail";
     }
   },
+
+  /**
+   * 로그인
+   */
 
   signIn: async ({ request }) => {
     try {
@@ -40,9 +51,11 @@ export const actions = {
         email,
         password,
       });
+      if (err) throw new Error(err.message);
       return "success";
     } catch (err) {
       console.error("Auth Error : ", err);
+      return "fail";
     }
   },
 };

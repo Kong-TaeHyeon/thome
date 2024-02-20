@@ -31,6 +31,9 @@
           href="/product"
           class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">상품</a>
         <a
+          href="/program"
+          class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">프로그램</a>
+        <a
           href="/coupon"
           class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">쿠폰</a>
         <a

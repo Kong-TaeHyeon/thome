@@ -61,7 +61,6 @@
 
     const contact = [["일시", "분류", "문의 내용", "답변 내용", "처리"]];
 
-    console.log(user.contact);
     user.contact.forEach((err) => {
       contact.push([
         err.createdAt ? new Date(err.createdAt).toLocaleString() : "",

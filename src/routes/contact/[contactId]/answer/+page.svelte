@@ -17,7 +17,13 @@
     formData.append("answer", answer);
 
     return async ({ result }) => {
-      alert("답변이 등록되었습니다.");
+      if (result.data === "Success") {
+        alert("답변이 등록되었습니다.");
+        window.location.reload();
+      } else {
+        alert("답변 등록에 실패하였습니다.");
+        window.location.reload();
+      }
     };
   };
 </script>
@@ -47,6 +53,13 @@
           <option value="COMPLETED">COMPLETED</option>
           <option value="ISSUE">ISSUE</option>
         </select>
+      </div>
+    </div>
+
+    <div class="mb-4 border-b border-gray-300">
+      <div class="mb-4">
+        <p class="mb-2 font-bold">답변자</p>
+        <p>{contact.respondent || "미정"}</p>
       </div>
     </div>
 

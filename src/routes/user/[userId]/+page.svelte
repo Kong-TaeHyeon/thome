@@ -170,7 +170,7 @@
   <form method="post" action="?/save" use:enhance={handleReTouch}>
     <button type="submit" formaction="?/save" class="mt-5 w-20 border-2">저장하기</button>
     <button type="button" on:click={userInfoDownload} class="mt-5 w-20 border-2">다운로드</button>
-    <button class="mt-5 w-20 border-2" on:click={() => goto("/user")}>목록보기</button>
+    <button type="button" class="mt-5 w-20 border-2" on:click={() => goto("/user")}>목록보기</button>
   </form>
 
   <div class="mb-2 flex flex-row">

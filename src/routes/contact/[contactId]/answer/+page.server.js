@@ -1,6 +1,6 @@
 import contactRepository from "../../../../lib/repository/contactRepository.js";
 
-export const load = async ({ params }) => {
+export const load = async ({ locals, params }) => {
   const contactId = params.contactId;
 
   const contact = await contactRepository.fetchContactById(contactId);
@@ -9,7 +9,7 @@ export const load = async ({ params }) => {
 };
 
 export const actions = {
-  save: async ({ request }) => {
+  save: async ({ locals, request }) => {
     try {
       const data = await request.formData();
 
@@ -23,11 +23,12 @@ export const actions = {
         status,
         answer,
         userId,
+        respondent: locals.name,
       };
 
-      const result = await contactRepository.updateContact({ contact });
+      await contactRepository.updateContact({ contact });
 
-      if (result) return "Success";
+      return "Success";
     } catch (err) {
       console.error("Create Coupon Error : ", err);
       return "fail";

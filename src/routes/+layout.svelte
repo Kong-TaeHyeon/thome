@@ -72,6 +72,9 @@
         <a
           href="/contact"
           class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">1:1 문의</a>
+        <a
+          href="/admin"
+          class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">관리자</a>
         {#if userRole === "ADMIN"}
           <!-- svelte-ignore a11y-click-events-have-key-events -->
           <div

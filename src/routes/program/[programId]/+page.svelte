@@ -105,8 +105,10 @@
 
     return ({ result }) => {
       if (result.data === "Success") {
-        alert("업데이트 완료.");
-        window.location.reload();
+        alert("저장 완료.");
+        window.location.href = "/program";
+      } else {
+        alert("형식을 맞춰주세요.");
       }
     };
   };

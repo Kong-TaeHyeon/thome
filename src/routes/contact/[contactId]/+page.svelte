@@ -24,6 +24,13 @@
       <p>{contact.status}</p>
     </div>
 
+    <div class="mb-4 border-b border-gray-300">
+      <div class="mb-4">
+        <p class="mb-2 font-bold">답변자</p>
+        <p>{contact.respondent || "미정"}</p>
+      </div>
+    </div>
+
     {#if contact.answer !== null}
       <div class="mb-4">
         <p class="mb-2 font-bold">답변</p>

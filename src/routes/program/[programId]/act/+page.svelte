@@ -1,5 +1,6 @@
 <script>
   import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
 
   export let data;
@@ -31,6 +32,16 @@
   }
 
   function addProgram() {
+    if (newAct.title === "" || newAct.subTitle === "" || newAct.duration === "") {
+      alert("항목을 채워주세요.");
+      return;
+    }
+    console.log(newAct.duration);
+    if (isNaN(newAct.duration) || newAct.duration === null) {
+      alert("Duration : 정수");
+      return;
+    }
+
     program.act = [...program.act, newAct];
     closeModal();
   }
@@ -58,7 +69,7 @@
 
     for (let i = 0; i < length; i++) {
       if (program.act[i].id) {
-        formData.append(`${i}imageUrl`, program.act[i].imageUrl);
+        formData.append(`${i}imageUrl`, program.act[i]?.imageUrl || null);
         formData.append(`${i}title`, program.act[i].title);
         formData.append(`${i}subTitle`, program.act[i].subTitle);
         formData.append(`${i}duration`, program.act[i].duration);
@@ -78,7 +89,7 @@
     formData.append("length", length);
 
     return ({ result }) => {
-      if (result.type === "success") {
+      if (result.data === "success") {
         alert("등록되었습니다.");
         window.location.reload();
       } else {
@@ -198,6 +209,7 @@
 
     <button
       type="button"
+      on:click={() => goto(`/program`)}
       class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
       >취소</button>
   </div>

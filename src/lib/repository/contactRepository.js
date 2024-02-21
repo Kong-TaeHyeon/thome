@@ -34,9 +34,12 @@ class ContactRepository {
   }
 
   async updateContact({ contact }) {
-    const { answer, status } = contact;
+    const { answer, status, respondent } = contact;
 
-    const { status: stat, error } = await supabase.from("contact").update({ answer, status }).eq("id", contact.id);
+    const { status: stat, error } = await supabase
+      .from("contact")
+      .update({ answer, status, respondent })
+      .eq("id", contact.id);
 
     if (error) throw new Error(error.message);
   }

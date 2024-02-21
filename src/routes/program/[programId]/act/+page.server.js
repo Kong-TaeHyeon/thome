@@ -45,7 +45,7 @@ export const actions = {
       act.title = acts.get(`${i}title`);
       act.subTitle = acts.get(`${i}subTitle`);
       act.duration = acts.get(`${i}duration`);
-      act.isOvertime = acts.get(`${i}isOvertime`);
+      act.isOvertime = acts.get(`${i}isOvertime`) || false;
       act.order = acts.get(`${i}order`);
       act.programId = params.programId;
 
@@ -55,8 +55,14 @@ export const actions = {
     const { error: deleteErr } = await supabase.from("act").delete().eq("programId", params.programId);
     const { error: insertErr } = await supabase.from("act").insert(actList);
 
-    if (deleteErr) throw new Error(deleteErr.message);
-    if (insertErr) throw new Error(insertErr.message);
+    if (deleteErr) {
+      console.error(deleteErr.message);
+      return "fail";
+    }
+    if (insertErr) {
+      console.error(insertErr.message);
+      return "fail";
+    }
 
     return "Success";
   },

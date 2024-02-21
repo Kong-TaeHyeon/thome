@@ -35,6 +35,7 @@
           <option value="ISSUE">Status (ISSUE)</option>
         </select>
       </th>
+      <th>Respondent</th>
     </tr>
   </thead>
 
@@ -46,6 +47,7 @@
         <td> {contact.title} </td>
         <td>{contact.user.nickname}</td>
         <td> {contact.status} </td>
+        <td> {contact.respondent || "미정"} </td>
       </tr>
     {/each}
   </tbody>

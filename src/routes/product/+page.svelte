@@ -1,10 +1,12 @@
 <script>
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   export let data;
-  const { products } = data;
+  const { products, count: totalProductCount } = data;
 
+  $: pageNum = $page.url.searchParams.get("pageNum") || 1;
   let selectedProducts = [];
   let isAllSelected = false;
 
@@ -111,6 +113,39 @@
       {/each}
     </tbody>
   </table>
+
+  {#if totalProductCount > 0 && !isNaN(Number(pageNum))}
+    <div class="my-3 flex w-full justify-center gap-4">
+      <button
+        type="button"
+        class="mr-4 cursor-pointer"
+        disabled={Number(pageNum) === 1}
+        on:click={() => {
+          window.location.href = `/program?pageNum=1`;
+        }}>«</button>
+      {#if Number(pageNum) !== 1}
+        <button
+          type="button"
+          on:click={() => {
+            window.location.href = `/program?pageNum=${Number(pageNum) - 1}`;
+          }}>{Number(pageNum) - 1}</button>
+      {/if}
+      <button class="font-bold text-primary underline">{Number(pageNum)}</button>
+      {#if Number(pageNum) < Math.ceil(totalProductCount / 20)}
+        <button
+          type="button"
+          on:click={() => {
+            window.location.href = `/program?pageNum=${Number(pageNum) + 1}`;
+          }}>{Number(pageNum) + 1}</button>
+      {/if}
+      <button
+        class="ml-4 cursor-pointer"
+        disabled={Number(pageNum) >= Math.ceil(totalProductCount / 20)}
+        on:click={() => {
+          window.location.href = `/program?pageNum=${Math.ceil(totalProductCount / 20)}`;
+        }}>»</button>
+    </div>
+  {/if}
 
   <div class="mt-4 flex items-center justify-center">
     <button

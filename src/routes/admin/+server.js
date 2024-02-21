@@ -1,5 +1,27 @@
 import { json } from "@sveltejs/kit";
-import { supabase } from "../../lib/supabaseClient.js";
+import { supabase, supabaseAdmin } from "../../lib/supabaseClient.js";
+
+export const DELETE = async ({ request }) => {
+  const admins = await request.json();
+  const ids = admins.map((err) => err.id);
+
+  try {
+    // Auth 삭제
+    admins.forEach(async (test) => {
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(test.id);
+
+      if (error) throw new Error(error.message);
+    });
+
+    const { error: deleteUser } = await supabase.from("admin").delete().in("id", ids);
+
+    if (deleteUser) throw new Error(deleteUser.message);
+    return json(true);
+  } catch (error) {
+    console.error(error.message);
+    return json(false);
+  }
+};
 
 export const POST = async ({ request }) => {
   const admin = await request.json();
@@ -24,6 +46,7 @@ export const POST = async ({ request }) => {
   }
 
   const { error: insertErr } = await supabase.from("admin").insert({
+    id: data.user.id,
     email: admin.email,
     name: admin.name,
     role: admin.role,

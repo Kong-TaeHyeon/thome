@@ -1,9 +1,11 @@
 import productRepository from "../../lib/repository/productRepository";
 
-export const load = async () => {
-  const { products } = await productRepository.fetchProductList();
+export const load = async ({ url }) => {
+  const pageNum = url.searchParams.get("pageNum") || 1;
+  const { products } = await productRepository.fetchProductsByPaging({ pageNum });
+  const { count } = await productRepository.fetchTotalCount();
 
-  return { products };
+  return { products, count };
 };
 
 export const actions = {

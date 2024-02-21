@@ -1,8 +1,19 @@
 import { supabase } from "../supabaseClient";
 
 class ProductRepository {
-  async fetchProductList() {
-    const { data: products, error: err } = await supabase.from("product").select("*");
+  async fetchTotalCount() {
+    const { count, error } = await supabase.from("product").select("*", { count: "exact" });
+    if (error) throw new Error(error);
+    return { count };
+  }
+
+  async fetchProductsByPaging({ pageNum }) {
+    const page = (Number(pageNum) - 1) * 20;
+
+    const { data: products, error: err } = await supabase
+      .from("product")
+      .select("*")
+      .range(page, page + 19);
 
     if (err) throw new Error(err.message);
 

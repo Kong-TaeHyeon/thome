@@ -50,7 +50,7 @@
 
   const deletedAdmins = async () => {
     if (selectedAdmins.length === 0) {
-      alert("삭제할 쿠폰을 선택해주세요");
+      alert("삭제할 관리자를 선택해주세요");
       return;
     }
 
@@ -66,6 +66,8 @@
     if (result) {
       alert("삭제되었습니다.");
       window.location.reload();
+    } else {
+      alert("오류가 발생하였습니다.");
     }
   };
 

@@ -1,13 +1,14 @@
 import { supabase } from "../supabaseClient";
 
 class ContactRepository {
-  async fetchContact() {
-    const { data: contacts } = await supabase
+  async fetchTotalCount() {
+    const { count, error } = await supabase
       .from("contact")
-      .select("*, user(*)")
+      .select("*", { count: "exact" })
       .order("createdAt", { ascending: false });
 
-    return contacts;
+    if (error) throw new Error(error);
+    return { count };
   }
 
   async fetchContactById(id) {
@@ -18,19 +19,29 @@ class ContactRepository {
     return contact;
   }
 
-  async fetchContactByOption(filter) {
+  async fetchContactByOptionWithPaging({ filter, pageNum }) {
+    const page = (Number(pageNum) - 1) * 20;
+
     if (filter === "all") {
-      return await this.fetchContact();
+      const { data: contacts, error } = await supabase
+        .from("contact")
+        .select("*, user(*)")
+        .order("createdAt", { ascending: false })
+        .range(page, page + 19);
+
+      if (error) throw new Error(error.message);
+      return { contacts };
+    } else {
+      const { data: contacts, error } = await supabase
+        .from("contact")
+        .select("*, user(*)")
+        .eq("status", filter)
+        .order("createdAt", { ascending: false })
+        .range(page, page + 19);
+
+      if (error) throw new Error(error.message);
+      return { contacts };
     }
-    const { data: contacts, error } = await supabase
-      .from("contact")
-      .select("*, user(*)")
-      .eq("status", filter)
-      .order("createdAt", { ascending: false });
-
-    if (error) throw new Error(error.message);
-
-    return contacts;
   }
 
   async updateContact({ contact }) {

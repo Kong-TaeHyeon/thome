@@ -5,9 +5,11 @@
 
   export let data;
 
-  const { contacts } = data;
+  const { contacts, count: totalContactCount } = data;
 
   let selectedStatus;
+
+  $: pageNum = $page.url.searchParams.get("pageNum") || 1;
 
   onMount(() => {
     selectedStatus = $page.url.searchParams.get("filter") || "all";
@@ -52,3 +54,36 @@
     {/each}
   </tbody>
 </table>
+
+{#if totalContactCount > 0 && !isNaN(Number(pageNum))}
+  <div class="my-3 flex w-full justify-center gap-4">
+    <button
+      type="button"
+      class="mr-4 cursor-pointer"
+      disabled={Number(pageNum) === 1}
+      on:click={() => {
+        window.location.href = `/contact?pageNum=1&filter=${selectedStatus}`;
+      }}>«</button>
+    {#if Number(pageNum) !== 1}
+      <button
+        type="button"
+        on:click={() => {
+          window.location.href = `/contact?pageNum=${Number(pageNum) - 1}&filter=${selectedStatus}`;
+        }}>{Number(pageNum) - 1}</button>
+    {/if}
+    <button class="font-bold text-primary underline">{Number(pageNum)}</button>
+    {#if Number(pageNum) < Math.ceil(totalContactCount / 20)}
+      <button
+        type="button"
+        on:click={() => {
+          window.location.href = `/contact?pageNum=${Number(pageNum) + 1}&filter=${selectedStatus}`;
+        }}>{Number(pageNum) + 1}</button>
+    {/if}
+    <button
+      class="ml-4 cursor-pointer"
+      disabled={Number(pageNum) >= Math.ceil(totalContactCount / 20)}
+      on:click={() => {
+        window.location.href = `/contact?pageNum=${Math.ceil(totalContactCount / 20)}&filter=${selectedStatus}`;
+      }}>»</button>
+  </div>
+{/if}

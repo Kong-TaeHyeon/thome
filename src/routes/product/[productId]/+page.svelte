@@ -80,7 +80,7 @@
 
     <div>
       <p class="mb-2 font-bold">상품 사진</p>
-      <img src={image} class="h-20 w-20" alt="product" />
+      <img src={image} class="h-20 w-20 object-contain" alt="product" />
       <button
         type="button"
         on:click={() => document.getElementById("imageUpload").click()}

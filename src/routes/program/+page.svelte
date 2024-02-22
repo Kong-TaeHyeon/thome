@@ -89,7 +89,7 @@
             scope="row"
             on:click={() => goto(`/program/${program.id}`)}
             class="flex items-center whitespace-nowrap py-4 text-gray-900 dark:text-white">
-            <img class="object-fit h-20 w-20" src={program.bannerImageUrl} alt="product" />
+            <img class="h-20 w-20 object-contain" src={program.bannerImageUrl} alt="product" />
           </th>
           <td on:click={() => goto(`/program/${program.id}`)} class="px-6 py-4"> {program.name} </td>
           <td on:click={() => goto(`/program/${program.id}`)} class="px-6 py-4">

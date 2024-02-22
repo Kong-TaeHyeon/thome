@@ -1,4 +1,5 @@
 import programRepository from "../../../lib/repository/programRepository.js";
+import storageRepostiory from "../../../lib/repository/storageRepostiory.js";
 import { supabase } from "../../../lib/supabaseClient.js";
 
 export const load = async ({ params }) => {
@@ -14,6 +15,7 @@ export const load = async ({ params }) => {
   return { program };
 };
 
+// 중복 코드를 제거.
 export const actions = {
   save: async ({ request, params }) => {
     const product = await request.formData();
@@ -29,56 +31,31 @@ export const actions = {
       manual: product.get("manual"),
     };
 
-    if (product.get("bannerImage") === "no") basicInfo.bannerImageUrl = null;
-    else if (product.get("bannerImage") === "url") {
-      basicInfo.bannerImageUrl = product.get("bannerImageUrl");
-    } else {
-      const file = product.get("bannerImageFile");
-      // 파일 등록 후 url. 등록.
-      const { data, error } = await supabase.storage
-        .from("program-images")
-        .upload(`img/${params.programId}/banner/${file.name}`, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-
-      let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
-      imageUrl = imageUrl.publicUrl;
-      basicInfo.bannerImageUrl = imageUrl;
+    async function processImage(imageType, fileKey, urlKey, folderPath) {
+      const imageTypeValue = product.get(imageType);
+      if (imageTypeValue === "no") {
+        basicInfo[urlKey] = null;
+      } else if (imageTypeValue === "url") {
+        basicInfo[urlKey] = product.get(urlKey);
+      } else {
+        const file = product.get(fileKey);
+        const imageUrl = await storageRepostiory.uploadImage({ file, folderPath });
+        if (imageUrl !== null) {
+          basicInfo[urlKey] = imageUrl;
+        }
+      }
     }
-
-    if (product.get("productImage") === "no") basicInfo.productImageUrl = null;
-    else if (product.get("productImage") === "url") {
-      basicInfo.productImageUrl = product.get("productImageUrl");
-    } else {
-      const file = product.get("productImageFile");
-      const { data, error } = await supabase.storage
-        .from("program-images")
-        .upload(`img/${params.programId}/product/${file.name}`, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-      let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
-      imageUrl = imageUrl.publicUrl;
-      basicInfo.productImageUrl = imageUrl;
-    }
-
-    if (product.get("bannerComingSoonImage") === "no") basicInfo.bannerImageUrlComingSoon = null;
-    else if (product.get("bannerComingSoonImage") == "url") {
-      basicInfo.bannerImageUrlComingSoon = product.get("bannerComingSoonImageUrl");
-    } else {
-      const file = product.get("bannerComingSoonImageFile");
-      const { data, error } = await supabase.storage
-        .from("program-images")
-        .upload(`img/${params.programId}/bannerComingSoon/${file.name}`, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-
-      let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
-      imageUrl = imageUrl.publicUrl;
-      basicInfo.bannerImageUrlComingSoon = imageUrl;
-    }
+    // 각 이미지(배너 , 상품, 커밍순) 비동기 처리.
+    await Promise.all([
+      processImage("bannerImage", "bannerImageFile", "bannerImageUrl", `img/${params.programId}/banner`),
+      processImage("productImage", "productImageFile", "productImageUrl", `img/${params.programId}/product`),
+      processImage(
+        "bannerComingSoonImage",
+        "bannerComingSoonImageFile",
+        "bannerImageUrlComingSoon",
+        `img/${params.programId}/bannerComingSoon`,
+      ),
+    ]);
 
     if (params.programId === "null") {
       const { error } = await supabase.from("program").insert({ ...basicInfo });

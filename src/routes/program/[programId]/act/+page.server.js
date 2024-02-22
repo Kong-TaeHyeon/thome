@@ -64,6 +64,6 @@ export const actions = {
       return "fail";
     }
 
-    return "Success";
+    return "success";
   },
 };

@@ -160,7 +160,7 @@
       <div class="flex flex-row items-center justify-center">
         <div class="mr-4">
           <p class=" font-bold">배너 이미지</p>
-          <img class="h-32 w-32" src={bannerImage.imageUrl} alt="banner" />
+          <img class="h-32 w-32 object-contain" src={bannerImage.imageUrl} alt="banner" />
           <button
             type="button"
             on:click={() => document.getElementById("bannerImageUpload").click()}

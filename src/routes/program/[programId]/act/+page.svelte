@@ -68,19 +68,15 @@
     let length = program.act.length;
 
     for (let i = 0; i < length; i++) {
+      formData.append(`${i}title`, program.act[i].title);
+      formData.append(`${i}subTitle`, program.act[i].subTitle);
+      formData.append(`${i}duration`, program.act[i].duration);
+      formData.append(`${i}isOvertime`, program.act[i].isOvertime);
+      formData.append(`${i}order`, i);
+
       if (program.act[i].id) {
         formData.append(`${i}imageUrl`, program.act[i]?.imageUrl || null);
-        formData.append(`${i}title`, program.act[i].title);
-        formData.append(`${i}subTitle`, program.act[i].subTitle);
-        formData.append(`${i}duration`, program.act[i].duration);
-        formData.append(`${i}isOvertime`, program.act[i].isOverTime);
-        formData.append(`${i}order`, i);
       } else {
-        formData.append(`${i}title`, program.act[i].title);
-        formData.append(`${i}subTitle`, program.act[i].subTitle);
-        formData.append(`${i}duration`, program.act[i].duration);
-        formData.append(`${i}isOvertime`, program.act[i].isOvertime);
-        formData.append(`${i}order`, i);
         if (program.act[i].imageFile === "") formData.append(`${i}imageUrl`, program.act[i].imageUrl);
         else formData.append(`${i}imageFile`, program.act[i].imageFile);
       }

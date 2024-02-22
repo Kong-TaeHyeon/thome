@@ -33,7 +33,10 @@ export const actions = {
             upsert: true,
           });
 
-        if (error) throw new Error(error.message);
+        if (error) {
+          console.error(error);
+          return "fail";
+        }
 
         let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
         imageUrl = imageUrl.publicUrl;

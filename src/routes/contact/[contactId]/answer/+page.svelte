@@ -73,6 +73,7 @@
         placeholder=". . . . ."></textarea>
       <div class="mt-4 flex justify-between">
         <button
+          type="button"
           class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-600 focus:outline-none"
           on:click={() => {
             goto("/contact");

@@ -182,6 +182,7 @@
         <tr>
           <th scope="col" class="px-6 py-3"> 일시 </th>
           <th scope="col" class="px-6 py-3"> 프로그램 </th>
+          <th scope="col" class="px-6 py-3"> 회차 </th>
         </tr>
       </thead>
       <tbody>
@@ -191,6 +192,7 @@
               {schedule.createdAt ? new Date(schedule.createdAt).toLocaleString() : ""}
             </th>
             <td class="px-6 py-4"> {schedule.program.name} </td>
+            <td class="px-6 py-4"> {schedule.round} </td>
           </tr>
         {/each}
       </tbody>

@@ -85,6 +85,10 @@ class UserRepository {
         foreignTable: "contact",
         ascending: false,
       })
+      .order("createdAt", {
+        foreignTable: "schedule",
+        ascending: false,
+      })
       .maybeSingle();
 
     if (userErr) throw new Error("fetch User Error : ", userErr.message);

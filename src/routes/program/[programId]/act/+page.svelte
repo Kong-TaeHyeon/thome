@@ -36,7 +36,7 @@
       alert("항목을 채워주세요.");
       return;
     }
-    console.log(newAct.duration);
+
     if (isNaN(newAct.duration) || newAct.duration === null) {
       alert("Duration : 정수");
       return;

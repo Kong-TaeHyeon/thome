@@ -44,9 +44,15 @@ export const actions = {
 
         const { error: updateErr } = await supabase.from("product").insert(product);
 
+        if (updateErr) {
+          console.error("Update Err (/new) : ", updateErr.message);
+          return "Fail";
+        }
+
         return "Success";
       } catch (err) {
         console.error("Prduct Error : ", err.message);
+        return "Fail";
       }
     } else {
       let imageUrl = null;

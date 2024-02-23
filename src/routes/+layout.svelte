@@ -62,6 +62,9 @@
               <a
                 href="/coupon"
                 class="block px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">쿠폰</a>
+              <a
+                href="/goods"
+                class="block px-4 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">굿즈</a>
             </div>
           {/if}
         </div>

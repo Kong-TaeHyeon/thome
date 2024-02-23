@@ -36,6 +36,8 @@ class GoodsRepository {
   }
 
   async upsertGoods({ goods }) {
+    // Goods 동일 이름이 존재할 경우 =>
+
     if (goods.id !== "undefined") {
       const { error } = await supabase
         .from("goods")
@@ -43,9 +45,13 @@ class GoodsRepository {
         .eq("id", goods.id);
       if (error) throw new Error(error);
     } else {
+      const { data } = await supabase.from("goods").select("*").eq("name", goods.name);
+      if (data) throw new Error("중복된 굿즈 이름");
+
       const { error } = await supabase
         .from("goods")
         .insert({ name: goods.name, price: goods.price, description: goods.description, imageUrl: goods.imageUrl });
+
       if (error) throw new Error(error);
     }
   }

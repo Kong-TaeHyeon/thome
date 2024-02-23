@@ -29,12 +29,10 @@ export const actions = {
     try {
       if (imageFile) {
         // Upload 할 파일이 있는 경우.
-        const { data, error } = await supabase.storage
-          .from("program-images")
-          .upload(`/img/goods/${goods.name}`, imageFile, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+        const { data, error } = await supabase.storage.from("program-images").upload(`/img/goods`, imageFile, {
+          cacheControl: "3600",
+          upsert: true,
+        });
         if (error) return "fail";
         let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
         newGoods.imageUrl = imageUrl.publicUrl;
@@ -45,7 +43,7 @@ export const actions = {
       return "success";
     } catch (err) {
       console.error(err);
-      return "fail";
+      return err.message;
     }
   },
 };

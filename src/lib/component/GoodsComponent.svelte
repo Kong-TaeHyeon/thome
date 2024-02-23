@@ -31,8 +31,7 @@
         alert("등록되었습니다.");
         window.location.reload();
       } else {
-        alert("오류가 발생하였습니다.");
-        window.location.reload();
+        alert(result.data);
       }
     };
   };

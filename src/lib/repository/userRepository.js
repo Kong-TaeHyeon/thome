@@ -99,9 +99,14 @@ class UserRepository {
       .select("*, user!userId(email)")
       .eq("fromUserId", userId);
 
-    if (inviteErr) throw new Error("fetch Invite User Error : ", inviteErr);
+    if (inviteErr) throw new Error("fetch Invite User Error : ", inviteErr.message);
 
     return { user, inviteUser };
+  }
+
+  async deleteUserById({ userId }) {
+    const { error } = await supabase.from("user").delete().in("id", userId);
+    if (error) throw new Error("Delete User Error : ", error.message);
   }
 }
 

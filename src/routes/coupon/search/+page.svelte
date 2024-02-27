@@ -21,14 +21,16 @@
       </tr>
     </thead>
     <tbody>
-      {#each coupons as coupon, idx}
-        <tr class="hover:bg-gray-200" on:click={() => goCoupon(coupon)}>
-          <td>{coupon.code}</td>
-          <td>{coupon.user?.nickname || ""}</td>
-          <td>{coupon.goods?.name || ""}</td>
-          <td>{coupon.createdAt ? new Date(coupon.createdAt).toLocaleString() : ""}</td>
-        </tr>
-      {/each}
+      {#if coupons?.length > 0}
+        {#each coupons as coupon, idx}
+          <tr class="hover:bg-gray-200" on:click={() => goCoupon(coupon)}>
+            <td>{coupon.code}</td>
+            <td>{coupon.user?.nickname || ""}</td>
+            <td>{coupon.goods?.name || ""}</td>
+            <td>{coupon.createdAt ? new Date(coupon.createdAt).toLocaleString() : ""}</td>
+          </tr>
+        {/each}
+      {/if}
     </tbody>
   </table>
 </div>

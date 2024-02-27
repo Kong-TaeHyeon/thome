@@ -42,7 +42,7 @@
       <button
         class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 focus:bg-blue-600 focus:outline-none"
         on:click={() => {
-          goto("/contact");
+          history.back();
         }}>목록 보기</button>
       <button
         class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600 focus:bg-green-600 focus:outline-none"

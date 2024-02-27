@@ -6,7 +6,7 @@ export const load = async ({ url }) => {
 
   const { contacts } = await contactRepository.fetchContactByOptionWithPaging({ filter, pageNum });
 
-  const { count } = await contactRepository.fetchTotalCount();
+  const { count } = await contactRepository.fetchTotalCount(filter);
 
   return { contacts, count };
 };

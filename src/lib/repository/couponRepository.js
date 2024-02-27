@@ -57,14 +57,6 @@ class CouponRepository {
         .ilike("code", `%${value}%`);
       return coupons;
     }
-
-    if (option === "user") {
-      // user 이름으로 검색
-    }
-
-    if (option === "goods") {
-      // goods 명으로 검색
-    }
   }
 
   async deleteCoupon(idList) {

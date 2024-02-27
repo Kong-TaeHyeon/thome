@@ -8,14 +8,14 @@ export const actions = {
    * 로그인
    */
 
-  signIn: async ({ request }) => {
+  signIn: async ({ locals, request }) => {
     try {
       const data = await request.formData();
 
       const email = data.get("email");
       const password = data.get("password");
 
-      const { data: user, error: err } = await supabase.auth.signInWithPassword({
+      const { data: user, error: err } = await locals.sb.auth.signInWithPassword({
         email,
         password,
       });

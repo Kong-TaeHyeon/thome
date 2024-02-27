@@ -83,8 +83,6 @@
 <div class="mb-4 w-[700px]">
   <select bind:value={selectedOption} class="ml-4 mr-2">
     <option value="code">Code</option>
-    <option value="user">User</option>
-    <option value="goods">Goods</option>
   </select>
   <input
     class="mr-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -96,7 +94,7 @@
     }}
     on:keydown={async (e) => {
       if (e.key === "Enter") {
-        await searchAndShowResult(e.target.value);
+        searchAndShowResult(e.target.value);
         showResult = true;
       }
     }} />
@@ -109,10 +107,7 @@
       {/each}
     </li>
   </ul>
-  <button
-    type="button"
-    class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-    >Search</button>
+
   <button
     type="button"
     class="ml-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"

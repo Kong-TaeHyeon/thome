@@ -100,6 +100,31 @@
       isAllSelected = false;
     }
   }
+
+  async function selectedUserDelete() {
+    if (selectedUsers.length === 0) {
+      alert("삭제할 유저를 선택해주세요.");
+      return;
+    } else {
+      let selectedUserIds = selectedUsers.map((u) => u.id);
+      const response = await fetch("/user", {
+        method: "DELETE",
+        body: JSON.stringify(selectedUserIds),
+        headers: {
+          "content-type": "application/json",
+        },
+      });
+
+      let result = await response.json();
+      console.log(result);
+      if (result.body === "Success") {
+        alert("성공적으로 삭제되었습니다.");
+        window.location.reload();
+      } else {
+        alert("오류가 발생하였습니다.");
+      }
+    }
+  }
 </script>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -227,4 +252,10 @@
     type="button"
     class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
     >전체 User Excel 파일 다운로드</button>
+
+  <button
+    on:click={selectedUserDelete}
+    type="button"
+    class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+    >선택한 User 삭제</button>
 </div>

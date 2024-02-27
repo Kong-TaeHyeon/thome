@@ -19,11 +19,11 @@ export const DELETE = async ({ locals, request }) => {
     if (deleteUser) throw new Error(deleteUser.message);
 
     // log In
-    const { data: admin } = await supabase.from("admin").select("*").eq("id", adminId).maybeSingle();
-    const { error } = await supabase.auth.signInWithPassword({
-      email: admin.email,
-      password: admin.password,
-    });
+    // const { data: admin } = await supabase.from("admin").select("*").eq("id", adminId).maybeSingle();
+    // const { error } = await supabase.auth.signInWithPassword({
+    //   email: admin.email,
+    //   password: admin.password,
+    // });
 
     return json(true);
   } catch (error) {
@@ -69,12 +69,12 @@ export const POST = async ({ locals, request }) => {
     return json(false);
   }
 
-  await supabase.auth.signOut();
+  // await supabase.auth.signOut();
 
-  await supabase.auth.signInWithPassword({
-    email: admin1.email,
-    password: admin1.password,
-  });
+  // await supabase.auth.signInWithPassword({
+  //   email: admin1.email,
+  //   password: admin1.password,
+  // });
 
   return json(true);
 };

@@ -1,14 +1,24 @@
 import { supabase } from "../supabaseClient";
 
 class ContactRepository {
-  async fetchTotalCount() {
-    const { count, error } = await supabase
-      .from("contact")
-      .select("*", { count: "exact" })
-      .order("createdAt", { ascending: false });
+  async fetchTotalCount(filter = "all") {
+    if (filter === "all") {
+      const { count, error } = await supabase
+        .from("contact")
+        .select("*", { count: "exact" })
+        .order("createdAt", { ascending: false });
 
-    if (error) throw new Error(error);
-    return { count };
+      if (error) throw new Error(error);
+      return { count };
+    } else {
+      const { count, error } = await supabase
+        .from("contact")
+        .select("*", { count: "exact" })
+        .eq("status", `${filter}`)
+        .order("createdAt", { ascending: false });
+      if (error) throw new Error(error);
+      return { count };
+    }
   }
 
   async fetchContactById(id) {

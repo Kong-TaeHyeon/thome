@@ -1,4 +1,3 @@
-import * as transliteration from "transliteration";
 import { supabase } from "../supabaseClient";
 
 class StorageRepository {

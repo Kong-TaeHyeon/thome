@@ -1,9 +1,18 @@
 import { supabase } from "../supabaseClient";
+import storageRepository from "./storageRepository";
 
 class GoodsRepository {
+  async fetchGoodsByIds({ goodsIds }) {
+    const { data: goods, error } = await supabase.from("goods").select("imagePath").in("id", goodsIds);
+
+    if (error) throw new Error(error.message);
+
+    return goods;
+  }
+
   async fetchTotalGoodsCount() {
     const { count, error } = await supabase.from("goods").select("*", { count: "exact" });
-    if (error) throw new Error(error);
+    if (error) throw new Error(error.message);
 
     return count;
   }
@@ -39,20 +48,37 @@ class GoodsRepository {
     // Goods 동일 이름이 존재할 경우 =>
 
     if (goods.id !== "undefined") {
-      const { error } = await supabase
-        .from("goods")
-        .update({ name: goods.name, price: goods.price, description: goods.description, imageUrl: goods.imageUrl })
-        .eq("id", goods.id);
-      if (error) throw new Error(error);
+      // Update 하기 전에 삭제를 해야지.
+      const { data } = await supabase.from("goods").select("imagePath").eq("id", goods.id).maybeSingle();
+
+      await Promise.all([
+        storageRepository.deleteFile({ imagePath: data.imagePath }),
+        supabase
+          .from("goods")
+          .update({
+            name: goods.name,
+            price: goods.price,
+            description: goods.description,
+            imageUrl: goods.imageUrl,
+            imagePath: goods.imagePath,
+          })
+          .eq("id", goods.id),
+      ]);
     } else {
       const { data } = await supabase.from("goods").select("*").eq("name", goods.name);
-      if (data) throw new Error("중복된 굿즈 이름");
+      if (data.length !== 0) {
+        throw new Error("중복된 굿즈 이름");
+      }
 
-      const { error } = await supabase
-        .from("goods")
-        .insert({ name: goods.name, price: goods.price, description: goods.description, imageUrl: goods.imageUrl });
+      const { error } = await supabase.from("goods").insert({
+        name: goods.name,
+        price: goods.price,
+        description: goods.description,
+        imageUrl: goods.imageUrl,
+        imagePath: goods.imagePath,
+      });
 
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.message);
     }
   }
 }

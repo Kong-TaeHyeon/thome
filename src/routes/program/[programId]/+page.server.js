@@ -1,5 +1,5 @@
 import programRepository from "../../../lib/repository/programRepository.js";
-import storageRepostiory from "../../../lib/repository/storageRepostiory.js";
+import storageRepository from "../../../lib/repository/storageRepository.js";
 import { supabase } from "../../../lib/supabaseClient.js";
 
 export const load = async ({ params }) => {
@@ -20,6 +20,11 @@ export const actions = {
   save: async ({ request, params }) => {
     const product = await request.formData();
 
+    var program = {};
+
+    if (params.programId !== "null")
+      var { data: program } = await supabase.from("program").select("*").eq("id", params.programId).maybeSingle();
+
     // 기본 정보.
     const basicInfo = {
       name: product.get("name"),
@@ -31,30 +36,30 @@ export const actions = {
       manual: product.get("manual"),
     };
 
-    async function processImage(imageType, fileKey, urlKey, folderPath) {
+    async function processImage(imageType, fileKey, urlKey) {
       const imageTypeValue = product.get(imageType);
       if (imageTypeValue === "no") {
         basicInfo[urlKey] = null;
+        basicInfo[imageType + "FilePath"] = null;
+
+        await storageRepository.deleteFile({ imagePath: [program[imageType + "FilePath"]] });
       } else if (imageTypeValue === "url") {
+        // 이미지를 그대로 두는 경우.
         basicInfo[urlKey] = product.get(urlKey);
       } else {
         const file = product.get(fileKey);
-        const imageUrl = await storageRepostiory.uploadImage({ file, folderPath });
+        const { imagePath, imageUrl } = await storageRepository.uploadFile({ file, category: `program/${imageType}` });
         if (imageUrl !== null) {
-          basicInfo[urlKey] = imageUrl;
+          basicInfo[urlKey] = imageUrl.publicUrl;
+          basicInfo[imageType + "FilePath"] = imagePath;
         }
       }
     }
     // 각 이미지(배너 , 상품, 커밍순) 비동기 처리.
     await Promise.all([
-      processImage("bannerImage", "bannerImageFile", "bannerImageUrl", `img/${params.programId}/banner`),
-      processImage("productImage", "productImageFile", "productImageUrl", `img/${params.programId}/product`),
-      processImage(
-        "bannerComingSoonImage",
-        "bannerComingSoonImageFile",
-        "bannerImageUrlComingSoon",
-        `img/${params.programId}/bannerComingSoon`,
-      ),
+      processImage("bannerImage", "bannerImageFile", "bannerImageUrl"),
+      processImage("productImage", "productImageFile", "productImageUrl"),
+      processImage("bannerComingSoonImage", "bannerComingSoonImageFile", "bannerImageUrlComingSoon"),
     ]);
 
     if (params.programId === "null") {
@@ -73,7 +78,7 @@ export const actions = {
       .eq("id", params.programId);
 
     if (error) {
-      console.error("Program Save Err", error.message);
+      console.error("Program Save Err : ", error.message);
       return "Fail";
     }
 

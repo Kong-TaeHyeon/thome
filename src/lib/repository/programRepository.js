@@ -8,6 +8,17 @@ class ProgramRepository {
     return count;
   }
 
+  async fetchProgramByIds({ programIds }) {
+    const { data: programPaths, error } = await supabase
+      .from("program")
+      .select("bannerImageFilePath, productImageFilePath, bannerComingSoonImageFilePath")
+      .in("id", programIds);
+
+    if (error) throw new Error(error.message);
+
+    return { programPaths };
+  }
+
   async fetchProgramById({ programId }) {
     if (programId === "undefined") return { program: {} };
 

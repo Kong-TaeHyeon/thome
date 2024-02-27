@@ -1,5 +1,6 @@
 import { json } from "@sveltejs/kit";
 import programRepository from "../../lib/repository/programRepository.js";
+import storageRepository from "../../lib/repository/storageRepository.js";
 
 export const DELETE = async ({ request }) => {
   try {
@@ -7,7 +8,14 @@ export const DELETE = async ({ request }) => {
 
     const programIds = programs.map((err) => err.id);
 
-    await programRepository.deleteProgramById({ programId: programIds });
+    const { programPaths } = await programRepository.fetchProgramByIds({ programIds });
+
+    const extractedPaths = programPaths.flatMap((obj) => Object.values(obj)).filter((value) => value !== null);
+
+    await Promise.all([
+      programRepository.deleteProgramById({ programId: programIds }),
+      storageRepository.deleteFile({ imagePath: extractedPaths }),
+    ]);
 
     return json(true);
   } catch (err) {

@@ -39,7 +39,7 @@
     return ({ result }) => {
       if (result.data === "Success") {
         alert("상품 추가 완료.");
-        window.location.reload();
+        goto("/product");
       }
     };
   };

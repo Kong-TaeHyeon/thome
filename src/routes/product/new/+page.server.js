@@ -1,3 +1,4 @@
+import storageRepository from "../../../lib/repository/storageRepository.js";
 import { supabase } from "../../../lib/supabaseClient";
 
 export const load = async () => {
@@ -19,16 +20,10 @@ export const actions = {
     const programId = data.get("programId");
     const img = data.get("img");
 
-    if (img) {
+    if (img !== "null") {
       try {
         // Image Upload
-        const { error: imageErr } = await supabase.storage.from("program-images").upload(`product/${img.name}`, img, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-        // Image Url
-        let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(`product/${img.name}`);
-        imageUrl = imageUrl.publicUrl;
+        const { imageUrl, imagePath } = await storageRepository.uploadFile({ file: img, category: "product" });
 
         // Product Update
         const product = {
@@ -39,9 +34,11 @@ export const actions = {
           shoppingUrl,
           programId,
           description,
-          imageUrl,
+          imageUrl: imageUrl.publicUrl,
+          imagePath,
         };
 
+        if (product.programId === "null") product.programId = null;
         const { error: updateErr } = await supabase.from("product").insert(product);
 
         if (updateErr) {
@@ -55,7 +52,6 @@ export const actions = {
         return "Fail";
       }
     } else {
-      let imageUrl = null;
       const product = {
         name,
         ingredient,
@@ -64,9 +60,15 @@ export const actions = {
         shoppingUrl,
         programId,
         description,
-        imageUrl,
       };
-      const { error: updateErr } = await supabase.from("product").insert(product);
+
+      if (product.programId === "null") product.programId = null;
+      const { error: insertErr } = await supabase.from("product").insert(product);
+
+      if (insertErr) {
+        console.error("Product insertErr : ", insertErr.message);
+        return "Fail";
+      }
       return "Success";
     }
   },

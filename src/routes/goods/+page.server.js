@@ -1,4 +1,5 @@
 import goodsRepository from "../../lib/repository/goodsRepository.js";
+import storageRepository from "../../lib/repository/storageRepository.js";
 import { supabase } from "../../lib/supabaseClient.js";
 
 export const load = async ({ url }) => {
@@ -29,13 +30,16 @@ export const actions = {
     try {
       if (imageFile) {
         // Upload 할 파일이 있는 경우.
-        const { data, error } = await supabase.storage.from("program-images").upload(`/img/goods`, imageFile, {
-          cacheControl: "3600",
-          upsert: true,
+        const { imageUrl, imagePath } = await storageRepository.uploadFile({
+          file: imageFile,
+          category: "goods",
         });
-        if (error) return "fail";
-        let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
+
         newGoods.imageUrl = imageUrl.publicUrl;
+        newGoods.imagePath = imagePath;
+      } else {
+        newGoods.imageUrl = null;
+        newGoods.imagePath = null;
       }
 
       await goodsRepository.upsertGoods({ goods: newGoods });

@@ -39,6 +39,8 @@
       if (result.data === "Success") {
         alert("업데이트 완료.");
         window.location.reload();
+      } else {
+        alert("오류 발생");
       }
     };
   };

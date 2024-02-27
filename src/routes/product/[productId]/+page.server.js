@@ -1,4 +1,5 @@
 import productRepository from "../../../lib/repository/productRepository";
+import storageRepository from "../../../lib/repository/storageRepository.js";
 import { supabase } from "../../../lib/supabaseClient.js";
 
 export const load = async ({ params }) => {
@@ -25,13 +26,13 @@ export const actions = {
 
     if (img) {
       try {
+        // 기존 이미지 삭제.
+        const { data } = await supabase.from("product").select("imagePath").eq("id", id).maybeSingle();
+        const deletedFilePath = data.imagePath;
+        await storageRepository.deleteFile({ imagePath: deletedFilePath });
+
         // Image Upload
-        const { error: imageErr } = await supabase.storage.from("program-images").upload(`product/${img.name}`, img, {
-          cacheControl: "3600",
-          upsert: false,
-        });
-        // Image Url
-        let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(`product/${img.name}`);
+        let { imageUrl, imagePath } = await storageRepository.uploadFile({ file: img, category: "product" });
         imageUrl = imageUrl.publicUrl;
 
         // Product Update
@@ -44,16 +45,20 @@ export const actions = {
           programId,
           description,
           imageUrl,
+          imagePath,
         };
-
+        if (product.programId === "null") product.programId = null;
         const { error: updateErr } = await supabase.from("product").update(product).eq("id", id);
+
+        if (updateErr) throw new Error(updateErr.message);
 
         return "Success";
       } catch (err) {
-        console.error("Prduct Error : ", err.message);
+        console.error("Product Error : ", err.message);
       }
     } else {
       let imageUrl = null;
+      let imagePath = null;
       const product = {
         name,
         ingredient,
@@ -63,8 +68,14 @@ export const actions = {
         programId,
         description,
         imageUrl,
+        imagePath,
       };
       const { error: updateErr } = await supabase.from("product").update(product).eq("id", id);
+
+      if (updateErr) {
+        console.error("Product Update Error : ", updateErr.message);
+        return "Fail";
+      }
       return "Success";
     }
   },

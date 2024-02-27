@@ -1,5 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 
+import * as transliteration from "transliteration";
+
 export const load = async ({ locals, url }) => {
   let userRole = locals?.userRole;
 

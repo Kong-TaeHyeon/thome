@@ -28,6 +28,12 @@ class ProductRepository {
     return { product };
   }
 
+  async fetchProductByIds({ productIds }) {
+    const { data: productPaths, error } = await supabase.from("product").select("*").in("id", productIds);
+
+    return productPaths.map((productPath) => productPath.imagePath);
+  }
+
   async deleteProductsById({ productIds }) {
     const { error } = await supabase.from("product").delete().in("id", productIds);
 

@@ -9,12 +9,18 @@ export const DELETE = async ({ request }) => {
     const programIds = programs.map((err) => err.id);
 
     const { programPaths } = await programRepository.fetchProgramByIds({ programIds });
-
     const extractedPaths = programPaths.flatMap((obj) => Object.values(obj)).filter((value) => value !== null);
+
+    const { actPaths } = await programRepository.fetchActPathByProgramId({ programIds });
+
+    const extractedImagePaths = actPaths
+      .flatMap((array) => array.act.map((item) => item.imagePath))
+      .filter((value) => value !== null);
 
     await Promise.all([
       programRepository.deleteProgramById({ programId: programIds }),
       storageRepository.deleteFile({ imagePath: extractedPaths }),
+      storageRepository.deleteFile({ imagePath: extractedImagePaths }),
     ]);
 
     return json(true);

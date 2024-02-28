@@ -14,6 +14,7 @@ class StorageRepository {
   }
 
   async deleteFile({ imagePath }) {
+    if (imagePath.length === 0) return;
     try {
       const { error } = await supabase.storage.from("program-images").remove(imagePath);
 

@@ -11,11 +11,14 @@ export const GET = async () => {
 export const DELETE = async ({ request }) => {
   try {
     const userIds = await request.json();
-    // const deletePromises = userIds.map((user) => supabaseAdmin.auth.admin.deleteUser(user.id));
-
+    const updateUserPromises = userIds.map((userId) => supabaseAdmin.auth.admin.deleteUser(userId));
+    const result = await Promise.all(updateUserPromises);
+    result.forEach(({ data, error }) => {
+      if (error) {
+        console.error(error);
+      }
+    });
     await userRepository.deleteUserById({ userId: userIds });
-    // await Promise.all(deletePromises);
-
     return json({ body: "Success" });
   } catch (err) {
     console.error(err);

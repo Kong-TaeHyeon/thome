@@ -57,6 +57,12 @@ class ProgramRepository {
     const { error } = await supabase.from("program").delete().in("id", programId);
     if (error) throw new Error(error.message);
   }
+
+  async fetchActPathByProgramId({ programIds }) {
+    const { data: actPaths, error } = await supabase.from("program").select("act(*)").in("id", programIds);
+    if (error) throw new Error(error.message);
+    return { actPaths };
+  }
 }
 
 export default new ProgramRepository();

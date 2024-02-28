@@ -83,16 +83,12 @@
 
     <div>
       <p class="mb-2 font-bold">상품 사진</p>
-      <img src={image} class="h-20 w-20 object-contain" alt="product" />
+      <img src={image} class="h-40 w-40 object-contain" alt="product" />
       <button
         type="button"
         on:click={() => document.getElementById("imageUpload").click()}
         class="me-2 mt-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
         >이미지 교체</button>
-      <button
-        type="button"
-        class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-        on:click={deleteImage}>이미지 제거</button>
     </div>
 
     <div>

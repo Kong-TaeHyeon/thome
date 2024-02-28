@@ -24,7 +24,7 @@ export const actions = {
     const programId = data.get("programId");
     const img = data.get("img");
 
-    if (img) {
+    if (img !== "undefined") {
       try {
         // 기존 이미지 삭제.
         const { data } = await supabase.from("product").select("imagePath").eq("id", id).maybeSingle();
@@ -57,8 +57,6 @@ export const actions = {
         console.error("Product Error : ", err.message);
       }
     } else {
-      let imageUrl = null;
-      let imagePath = null;
       const product = {
         name,
         ingredient,
@@ -67,8 +65,6 @@ export const actions = {
         shoppingUrl,
         programId,
         description,
-        imageUrl,
-        imagePath,
       };
       const { error: updateErr } = await supabase.from("product").update(product).eq("id", id);
 

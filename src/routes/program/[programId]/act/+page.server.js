@@ -1,4 +1,6 @@
+import actsRepository from "../../../../lib/repository/actsRepository.js";
 import programRepository from "../../../../lib/repository/programRepository.js";
+import storageRepository from "../../../../lib/repository/storageRepository.js";
 import { supabase } from "../../../../lib/supabaseClient.js";
 
 export const load = async ({ params }) => {
@@ -18,55 +20,42 @@ export const actions = {
   save: async ({ request, params }) => {
     const acts = await request.formData();
 
-    const actList = [];
-    const length = acts.get("length");
+    const programId = params.programId;
 
-    for (let i = 0; i < length; i++) {
-      let act = {};
-      if (acts.get(`${i}imageFile`) !== null) {
-        // 이미지를 업로드해야 하는 경우.
-        const file = acts.get(`${i}imageFile`);
-        const { data, error } = await supabase.storage
-          .from("program-images")
-          .upload(`img/${params.programId}/act/${i}+${file.name}`, file, {
-            cacheControl: "3600",
-            upsert: true,
-          });
+    const title = acts.get("title");
+    const subTitle = acts.get("subTitle");
+    const duration = acts.get("duration");
+    const isOvertime = acts.get("isOvertime");
+    const imageFile = acts.get("imageFile");
+    const order = acts.get("order");
 
-        if (error) {
-          console.error(error);
-          return "fail";
-        }
-
-        let { data: imageUrl } = await supabase.storage.from("program-images").getPublicUrl(data.path);
-        imageUrl = imageUrl.publicUrl;
-        act.imageUrl = imageUrl;
+    try {
+      if (imageFile === "") {
+        // 파일이 없는 경우.
+        await actsRepository.insertAct({ act: { title, subTitle, duration, isOvertime, programId, order } });
       } else {
-        act.imageUrl = acts.get(`${i}imageUrl`);
+        // 이미지 파일이 있는 경우.
+        let { imageUrl, imagePath } = await storageRepository.uploadFile({ file: imageFile, category: "act" });
+        imageUrl = imageUrl.publicUrl;
+
+        await actsRepository.insertAct({
+          act: {
+            title,
+            subTitle,
+            duration,
+            isOvertime,
+            programId,
+            imageUrl,
+            imagePath,
+            order,
+          },
+        });
       }
 
-      act.title = acts.get(`${i}title`);
-      act.subTitle = acts.get(`${i}subTitle`);
-      act.duration = acts.get(`${i}duration`);
-      act.isOvertime = acts.get(`${i}isOvertime`) || false;
-      act.order = acts.get(`${i}order`);
-      act.programId = params.programId;
-
-      actList.push(act);
-    }
-
-    const { error: deleteErr } = await supabase.from("act").delete().eq("programId", params.programId);
-    const { error: insertErr } = await supabase.from("act").insert(actList);
-
-    if (deleteErr) {
-      console.error(deleteErr.message);
+      return "success";
+    } catch (error) {
+      console.error(error);
       return "fail";
     }
-    if (insertErr) {
-      console.error(insertErr.message);
-      return "fail";
-    }
-
-    return "success";
   },
 };

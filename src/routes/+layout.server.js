@@ -1,4 +1,5 @@
 import { redirect } from "@sveltejs/kit";
+import { supabaseAdmin } from "../lib/supabaseClient.js";
 
 export const load = async ({ locals, url }) => {
   let userRole = locals?.userRole;
@@ -11,6 +12,5 @@ export const load = async ({ locals, url }) => {
   if (url.pathname == "/auth") {
     if (userRole === "ADMIN") throw redirect(301, "/");
   }
-
   return { userRole, userName };
 };

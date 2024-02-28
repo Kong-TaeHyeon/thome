@@ -5,6 +5,7 @@ class UserRepository {
     const { data: users, error } = await supabase
       .from("user")
       .select("* , point(*)")
+      .is("deletedAt", null)
       .gt("point.expiredAt", new Date().toISOString())
       .order("createdAt", { ascending: true });
 
@@ -15,7 +16,7 @@ class UserRepository {
 
   // 총회원수.
   async fetchTotalUser() {
-    const { count, error } = await supabase.from("user").select("*", { count: "exact" });
+    const { count, error } = await supabase.from("user").select("*", { count: "exact" }).is("deletedAt", null);
 
     if (error) throw new Error(error.message);
 
@@ -30,7 +31,9 @@ class UserRepository {
     const { data: users, error } = await supabase
       .from("user")
       .select("* , point(*)")
+      .is("deletedAt", null)
       .gt("point.expiredAt", new Date().toISOString())
+
       .order("createdAt", { ascending: true })
       .range(page, page + 19);
 
@@ -57,6 +60,7 @@ class UserRepository {
     const { count: weekCount, error: err1 } = await supabase
       .from("user")
       .select("*", { count: "exact" })
+      .is("deletedAt", null)
       .lte("createdAt", date.toISOString())
       .gte("createdAt", aWeekAgo.toISOString());
 
@@ -65,6 +69,7 @@ class UserRepository {
     const { count: monthCount, error: err2 } = await supabase
       .from("user")
       .select("*", { count: "exact" })
+      .is("deletedAt", null)
       .lte("createdAt", date.toISOString())
       .gte("createdAt", aMonthAgo.toISOString());
     if (err2) throw new Error(err2.message);
@@ -80,6 +85,7 @@ class UserRepository {
         "*, point(*),contact(*), schedule(*, program(*)), coupon(*, goods(*)), record(*,schedule(program(*))),inviteUser!fromUserId(*)",
       )
       .eq("id", userId)
+      .is("deletedAt", null)
       .gt("point.expiredAt", new Date().toISOString())
       .order("createdAt", {
         foreignTable: "contact",
@@ -105,7 +111,10 @@ class UserRepository {
   }
 
   async deleteUserById({ userId }) {
-    const { error } = await supabase.from("user").delete().in("id", userId);
+    const now = new Date().toISOString();
+
+    const { error } = await supabase.from("user").update({ deletedAt: now }).in("id", userId);
+
     if (error) throw new Error("Delete User Error : ", error.message);
   }
 }

@@ -31,7 +31,7 @@
     newAct.imageUrl = URL.createObjectURL(event.target.files[0]);
   }
 
-  function addProgram() {
+  async function addProgram({ formData, cancel }) {
     if (newAct.title === "" || newAct.subTitle === "" || newAct.duration === "") {
       alert("항목을 채워주세요.");
       return;
@@ -42,8 +42,22 @@
       return;
     }
 
-    program.act = [...program.act, newAct];
-    closeModal();
+    formData.append(`title`, newAct.title);
+    formData.append(`subTitle`, newAct.subTitle);
+    formData.append(`duration`, newAct.duration);
+    formData.append(`isOvertime`, newAct.isOvertime);
+    formData.append(`order`, program.act.length);
+
+    formData.append(`imageFile`, newAct.imageFile); // 이것이 이미지 파일
+
+    return ({ result }) => {
+      if (result.data === "success") {
+        alert("추가 되었습니다.");
+        window.location.reload();
+      } else {
+        alert("오류가 발생하였습니다.");
+      }
+    };
   }
 
   function addRow() {
@@ -60,39 +74,24 @@
     openModal();
   }
 
-  function deleteRow(index) {
-    program.act = program.act.filter((_, i) => i !== index);
-  }
+  async function deleteRow(index) {
+    const response = await fetch($page.url.pathname, {
+      method: "DELETE",
+      body: JSON.stringify({
+        actId: program.act[index].id,
+        order: program.act[index].order,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
 
-  async function handleSubmit({ formData }) {
-    let length = program.act.length;
-
-    for (let i = 0; i < length; i++) {
-      formData.append(`${i}title`, program.act[i].title);
-      formData.append(`${i}subTitle`, program.act[i].subTitle);
-      formData.append(`${i}duration`, program.act[i].duration);
-      formData.append(`${i}isOvertime`, program.act[i].isOvertime);
-      formData.append(`${i}order`, i);
-
-      if (program.act[i].id) {
-        formData.append(`${i}imageUrl`, program.act[i]?.imageUrl || null);
-      } else {
-        if (program.act[i].imageFile === "") formData.append(`${i}imageUrl`, program.act[i].imageUrl);
-        else formData.append(`${i}imageFile`, program.act[i].imageFile);
-      }
+    if (await response.json()) {
+      alert("삭제되었습니다.");
+      window.location.reload();
+    } else {
+      alert("오류가 발생하였습니다.");
     }
-
-    formData.append("length", length);
-
-    return ({ result }) => {
-      if (result.data === "success") {
-        alert("등록되었습니다.");
-        window.location.reload();
-      } else {
-        alert("오류가 발생하였습니다.");
-        window.location.reload();
-      }
-    };
   }
 </script>
 
@@ -100,7 +99,7 @@
   <h1>Program</h1>
   <h2>{program.name}</h2>
 </div>
-<form method="post" action="?/save" use:enhance={handleSubmit}>
+<div>
   <div class="relative mb-2 flex flex-col items-center overflow-x-auto shadow-md sm:rounded-lg">
     <p class="mb-2 text-lg font-bold">연결된 상품 목록</p>
     <table class="w-full table-fixed text-left text-sm text-gray-500 rtl:text-right dark:text-gray-400">
@@ -198,21 +197,24 @@
 
   <div class="flex items-center justify-center">
     <button
-      type="submit"
-      on:click={handleSubmit}
-      class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-      >저장</button>
-
-    <button
       type="button"
       on:click={() => goto(`/program`)}
       class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-      >취소</button>
+      >목록</button>
+    <button
+      type="button"
+      on:click={() => history.back()}
+      class="mb-2 me-2 rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+      >뒤로가기</button>
   </div>
-</form>
+</div>
 
 {#if isModalOpen}
-  <div class="fixed inset-0 z-10 flex items-center justify-center">
+  <form
+    method="post"
+    action="?/save"
+    use:enhance={addProgram}
+    class="fixed inset-0 z-10 flex items-center justify-center">
     <div class="absolute inset-0 bg-gray-900 opacity-50"></div>
     <div class="z-20 rounded bg-white p-6 shadow-md">
       <h2 class="mb-4 text-lg font-semibold">Add New Program</h2>
@@ -226,9 +228,9 @@
         <span>Is Overtime</span>
       </label>
       <div class="mt-4 flex justify-end">
-        <button class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" on:click={addProgram}>Add</button>
+        <button class="rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600" formaction="?/save">Add</button>
         <button class="ml-2 rounded bg-gray-400 px-4 py-2 text-white" on:click={closeModal}>Cancel</button>
       </div>
     </div>
-  </div>
+  </form>
 {/if}

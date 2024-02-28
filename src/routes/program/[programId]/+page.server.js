@@ -48,6 +48,7 @@ export const actions = {
         basicInfo[urlKey] = product.get(urlKey);
       } else {
         const file = product.get(fileKey);
+        await storageRepository.deleteFile({ imagePath: [program[imageType + "FilePath"]] });
         const { imagePath, imageUrl } = await storageRepository.uploadFile({ file, category: `program/${imageType}` });
         if (imageUrl !== null) {
           basicInfo[urlKey] = imageUrl.publicUrl;

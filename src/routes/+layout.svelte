@@ -26,9 +26,9 @@
 <nav class="mb-2 bg-gray-800 py-2">
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="flex h-16 items-center justify-between">
-      <div class="flex-shrink-0">
+      <button class="flex-shrink-0">
         <a href="/" class="text-2xl font-bold text-white">Thome</a>
-      </div>
+      </button>
 
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="flex">

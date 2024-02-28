@@ -11,7 +11,20 @@ export const DELETE = async ({ request }) => {
 
     return json(true);
   } catch (err) {
-    console.error("coupon/server.js Error : ", err);
+    console.error("news/server.js Error : ", err);
+    return json(false);
+  }
+};
+
+export const POST = async ({ request }) => {
+  try {
+    const news = await request.json();
+
+    await newsRepository.updateNews({ news });
+
+    return json(true);
+  } catch (err) {
+    console.error("news/server.js Error : ", err);
     return json(false);
   }
 };

@@ -13,6 +13,13 @@ class NewsRepository {
     return { news };
   }
 
+  async fetchNewsById({ newsId }) {
+    const { data: news, error } = await supabase.from("news").select("*").eq("id", newsId).maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return { news };
+  }
+
   async fetchTotalNewCount() {
     const { count: totalNewsCount, error } = await supabase.from("news").select("*", { count: "exact" });
     if (error) throw new Error(error.message);
@@ -25,6 +32,15 @@ class NewsRepository {
     if (error) throw new Error(error.message);
 
     return { status };
+  }
+
+  async updateNews({ news }) {
+    const { error } = await supabase
+      .from("news")
+      .update({ content: news.content, title: news.title })
+      .eq("id", news.id);
+
+    if (error) throw new Error(error.message);
   }
 
   async deleteNews(idList) {

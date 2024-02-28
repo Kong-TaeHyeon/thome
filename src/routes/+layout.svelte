@@ -3,7 +3,7 @@
   import "../app.pcss";
 
   export let data;
-  let { userRole } = data;
+  let { userRole, userName } = data;
 
   let isOpen = false;
 
@@ -29,8 +29,15 @@
       <div class="flex-shrink-0">
         <a href="/" class="text-2xl font-bold text-white">Thome</a>
       </div>
+
       <!-- svelte-ignore a11y-no-static-element-interactions -->
       <div class="flex">
+        {#if userName !== undefined}
+          <div class="rounded-md px-3 py-2 text-sm font-bold text-gray-50">
+            {userName} 님
+          </div>
+        {/if}
+
         <a
           href="/user"
           class="rounded-md px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white">회원</a>

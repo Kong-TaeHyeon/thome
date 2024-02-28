@@ -38,6 +38,7 @@ export const handle = async ({ event, resolve }) => {
 
   event.locals.session = await event.locals.getSession();
   event.locals.userRole = event.locals.session?.user?.user_metadata?.role;
+  event.locals.userName = event.locals.session?.user?.user_metadata?.name;
 
   return resolve(event, {
     filterSerializedResponseHeaders(name) {

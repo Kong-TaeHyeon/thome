@@ -144,8 +144,8 @@
           </td>
           <td on:click={() => goCoupon(coupon)}>{coupon.code}</td>
           <td on:click={() => goCoupon(coupon)}>{coupon.user?.nickname || ""}</td>
-          <td on:click={() => goCoupon(coupon)}>{coupon.goods?.name}</td>
-          <td on:click={() => goCoupon(coupon)}>{coupon.goods?.price}</td>
+          <td on:click={() => goCoupon(coupon)}>{coupon.goods?.name || ""}</td>
+          <td on:click={() => goCoupon(coupon)}>{coupon.goods?.price || ""}</td>
           <td on:click={() => goCoupon(coupon)}
             >{coupon.createdAt ? new Date(coupon.createdAt).toLocaleString() : ""}</td>
         </tr>
@@ -189,7 +189,7 @@
 
 <style>
   .dropdown-content {
-    position: fixed;
+    position: absolute;
     background-color: white;
   }
 

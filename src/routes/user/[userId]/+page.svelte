@@ -6,17 +6,22 @@
 
   export let data;
 
-  const { user, inviteUser, calRangePoint } = data;
+  let { user, inviteUser, calRangePoint } = data;
 
   let rangeIndex;
 
   onMount(() => {
     if (calRangePoint > 75000) {
       rangeIndex = "PR";
-    } else if (30000 < calRangePoint <= 75000) rangeIndex = "SR";
-    else if (15000 < calRangePoint <= 30000) rangeIndex = "JR";
-    else if (5000 < calRangePoint <= 15000) rangeIndex = "AR";
-    else rangeIndex = "IR";
+    } else if (30000 < calRangePoint && calRangePoint <= 75000) {
+      rangeIndex = "SR";
+    } else if (15000 < calRangePoint && calRangePoint <= 30000) {
+      rangeIndex = "JR";
+    } else if (5000 < calRangePoint && calRangePoint <= 15000) {
+      rangeIndex = "AR";
+    } else {
+      rangeIndex = "IR";
+    }
   });
 
   const userInfoDownload = async () => {

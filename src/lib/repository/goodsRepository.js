@@ -71,7 +71,7 @@ class GoodsRepository {
           .eq("id", goods.id),
       ]);
     } else {
-      const { data } = await supabase.from("goods").select("*").eq("name", goods.name);
+      const { data } = await supabase.from("goods").select("*").eq("name", goods.name).is("deletedAt", null);
       if (data.length !== 0) {
         throw new Error("중복된 굿즈 이름");
       }

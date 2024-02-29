@@ -41,7 +41,7 @@
   <div class="fixed inset-0 z-10 flex items-center justify-center">
     <div class="absolute inset-0 bg-gray-900 opacity-50"></div>
     <div class="z-20 rounded bg-white p-6 shadow-md">
-      <h2 class="mb-4 text-lg font-semibold">Add New Program</h2>
+      <h2 class="mb-4 text-lg font-semibold">Add New Goods</h2>
       <input type="text" placeholder="Title" bind:value={goods.name} class="mb-2 w-full rounded border p-2" />
       <input
         type="text"

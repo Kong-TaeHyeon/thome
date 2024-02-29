@@ -9,19 +9,16 @@
   let bannerImage = {
     imageUrl: program.bannerImageUrl,
     imageFile: null,
-    check: false,
   };
 
   let bannerComingSoonImage = {
     imageUrl: program.bannerImageUrlComingSoon,
     imageFile: null,
-    check: false,
   };
 
   let productImage = {
     imageUrl: program.productImageUrl,
     imageFile: null,
-    check: false,
   };
 
   const handleBannerImageUpload = (event) => {
@@ -82,7 +79,7 @@
       // Image 를 수정하지 않는 것.
       if (bannerComingSoonImage.imageFile === null) {
         formData.append("bannerComingSoonImage", "url");
-        formData.append("bannerComingSoonImageUrl", program.bannerImageUrlComingSoon);
+        formData.append("bannerImageUrlComingSoon", program.bannerImageUrlComingSoon);
       } else {
         // Image 를 새로 업로드해야 함.
         formData.append("bannerComingSoonImage", "file");

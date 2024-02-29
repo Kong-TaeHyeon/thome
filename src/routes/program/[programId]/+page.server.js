@@ -45,6 +45,7 @@ export const actions = {
         await storageRepository.deleteFile({ imagePath: [program[imageType + "FilePath"]] });
       } else if (imageTypeValue === "url") {
         // 이미지를 그대로 두는 경우.
+
         basicInfo[urlKey] = product.get(urlKey);
       } else {
         const file = product.get(fileKey);

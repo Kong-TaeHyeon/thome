@@ -13,6 +13,7 @@ class ProductRepository {
     const { data: products, error: err } = await supabase
       .from("product")
       .select("*")
+      .order("name", { ascending: true })
       .range(page, page + 19);
 
     if (err) throw new Error(err.message);

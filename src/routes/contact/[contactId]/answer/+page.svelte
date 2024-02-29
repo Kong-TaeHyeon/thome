@@ -1,6 +1,7 @@
 <script>
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+  import { page } from "$app/stores";
 
   export let data;
 
@@ -19,7 +20,7 @@
     return async ({ result }) => {
       if (result.data === "Success") {
         alert("답변이 등록되었습니다.");
-        window.location.reload();
+        history.back();
       } else {
         alert("답변 등록에 실패하였습니다.");
         window.location.reload();

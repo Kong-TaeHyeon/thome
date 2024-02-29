@@ -54,13 +54,15 @@ class CouponRepository {
       const { data: coupons, error } = await supabase
         .from("coupon")
         .select("* , goods(*), user(*)")
+        .is("deletedAt", null)
         .ilike("code", `%${value}%`);
       return coupons;
     }
   }
 
   async deleteCoupon(idList) {
-    const { data, error } = await supabase.from("coupon").delete().in("id", idList);
+    const date = new Date();
+    const { data, error } = await supabase.from("coupon").update({ deletedAt: date.toISOString() }).in("id", idList);
 
     if (error) throw new Error(error.message);
 

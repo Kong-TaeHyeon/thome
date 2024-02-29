@@ -1,5 +1,6 @@
 <script>
   import { enhance } from "$app/forms";
+  import { goto } from "$app/navigation";
 
   let option = "email";
   let showResult = false;
@@ -38,7 +39,10 @@
       if (result.type === "success") {
         if (result.data === "fail") {
           alert("쿠폰 코드가 중복되었습니다.");
-        } else alert("쿠폰이 등록되었습니다.");
+        } else {
+          alert("쿠폰이 등록되었습니다.");
+          goto("/coupon");
+        }
       } else {
         alert("오류가 발생했습니다.");
       }

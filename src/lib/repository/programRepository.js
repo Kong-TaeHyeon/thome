@@ -45,7 +45,8 @@ class ProgramRepository {
     const { data: programs, error } = await supabase
       .from("program")
       .select("*")
-      .order("createdAt", { ascending: true })
+      .is("deletedAt", null)
+      .order("createdAt", { ascending: false })
       .range(page, page + 19);
 
     if (error) throw new Error(error.message);
@@ -54,7 +55,9 @@ class ProgramRepository {
   }
 
   async deleteProgramById({ programId }) {
-    const { error } = await supabase.from("program").delete().in("id", programId);
+    let date = new Date();
+    const { error } = await supabase.from("program").update({ deletedAt: date.toISOString() }).in("id", programId);
+
     if (error) throw new Error(error.message);
   }
 

@@ -1,11 +1,23 @@
 <script>
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
+  import { onMount } from "svelte";
   import { utils, writeFile } from "xlsx";
 
   export let data;
 
   const { user, inviteUser, calRangePoint } = data;
+
+  let rangeIndex;
+
+  onMount(() => {
+    if (calRangePoint > 75000) {
+      rangeIndex = "PR";
+    } else if (30000 < calRangePoint <= 75000) rangeIndex = "SR";
+    else if (15000 < calRangePoint <= 30000) rangeIndex = "JR";
+    else if (5000 < calRangePoint <= 15000) rangeIndex = "AR";
+    else rangeIndex = "IR";
+  });
 
   const userInfoDownload = async () => {
     const userInfo = [
@@ -153,7 +165,12 @@
           <p class="font-bold">Skin Type</p>
           <input class="border" bind:value={user.skinType} />
         </div>
-        <p class="font-bold">Thome Index</p>
+
+        <div>
+          <p class="font-bold">Thome Index</p>
+          <p>{rangeIndex}</p>
+        </div>
+        <!-- <p class="font-bold">Thome Index</p>
         <select bind:value={user.thomeIndex}>
           <option value="AAA">AAA</option>
           <option value="AA">AA</option>
@@ -163,7 +180,7 @@
           <option value="CCC">CCC</option>
           <option value="CC">CC</option>
           <option value="C">C</option>
-        </select>
+        </select> -->
       </div>
     </div>
   </div>

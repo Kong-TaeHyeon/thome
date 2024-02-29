@@ -23,7 +23,7 @@ export const actions = {
         status,
         answer,
         userId,
-        respondent: locals.name,
+        respondent: locals.session.user.user_metadata.name,
       };
 
       await contactRepository.updateContact({ contact });

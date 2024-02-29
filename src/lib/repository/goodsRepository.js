@@ -11,7 +11,7 @@ class GoodsRepository {
   }
 
   async fetchTotalGoodsCount() {
-    const { count, error } = await supabase.from("goods").select("*", { count: "exact" });
+    const { count, error } = await supabase.from("goods").select("*", { count: "exact" }).is("deletedAt", null);
     if (error) throw new Error(error.message);
 
     return count;
@@ -23,6 +23,7 @@ class GoodsRepository {
     const { data: goods, error } = await supabase
       .from("goods")
       .select("*")
+      .is("deletedAt", null)
       .range(page, page + 19);
 
     if (error) throw new Error(error);
@@ -31,7 +32,11 @@ class GoodsRepository {
   }
 
   async fetchGoodsByName(name) {
-    const { data: goods, error } = await supabase.from("goods").select("*").ilike("name", `%${name}%`);
+    const { data: goods, error } = await supabase
+      .from("goods")
+      .select("*")
+      .is("deletedAt", null)
+      .ilike("name", `%${name}%`);
 
     if (error) throw new Error(error);
 
@@ -39,7 +44,8 @@ class GoodsRepository {
   }
 
   async deleteGoodsById({ goodsId }) {
-    const { error } = await supabase.from("goods").delete().in("id", goodsId);
+    let date = new Date();
+    const { error } = await supabase.from("goods").update({ deletedAt: date.toISOString() }).in("id", goodsId);
 
     if (error) throw new Error(error);
   }

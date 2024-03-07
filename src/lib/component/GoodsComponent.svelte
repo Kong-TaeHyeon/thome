@@ -18,6 +18,11 @@
       cancel();
     }
 
+    if (goods.price >= 32767) {
+      alert("값의 범위는 32767 까지 입니다.");
+      cancel();
+    }
+
     formData.append("id", goods.id);
     formData.append("name", goods.name);
     formData.append("price", goods.price);

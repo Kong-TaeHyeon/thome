@@ -22,7 +22,8 @@ class PointRepository {
       .from("point")
       .select("point")
       .lte("createdAt", date.toISOString())
-      .gte("createdAt", aWeekAgo.toISOString());
+      .gte("createdAt", aWeekAgo.toISOString())
+      .gte("point", 0);
 
     if (error) throw new Error(error.message);
 
@@ -31,7 +32,8 @@ class PointRepository {
       .from("point")
       .select("point")
       .lte("createdAt", date.toISOString())
-      .gte("createdAt", aMonthAgo.toISOString());
+      .gte("createdAt", aMonthAgo.toISOString())
+      .gte("point", 0);
 
     if (err) throw new Error(err.message);
 

@@ -9,13 +9,15 @@
 
   const { contact } = data;
 
-  let answer = contact.answer;
+  let answer = contact.answer || null;
+  console.log(answer);
 
   const submitForm = async ({ formData, cancel }) => {
     formData.append("id", contact.id);
     formData.append("userId", contact.userId);
     formData.append("status", selectedStatus);
-    formData.append("answer", answer);
+
+    if (answer !== null) formData.append("answer", answer);
 
     return async ({ result }) => {
       if (result.data === "Success") {

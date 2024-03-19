@@ -43,7 +43,7 @@
 
   <tbody>
     {#each contacts as contact, idx}
-      <tr class="hover:bg-gray-200" on:click={() => goto(`/contact/${contact.id}`)}>
+      <tr class=" cursor-pointer hover:bg-gray-200" on:click={() => goto(`/contact/${contact.id}`)}>
         <td>{contact.createdAt ? new Date(contact.createdAt).toLocaleString() : ""}</td>
         <td>{contact.type}</td>
         <td> {contact.title} </td>

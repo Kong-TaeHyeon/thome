@@ -76,7 +76,8 @@
     </thead>
     <tbody>
       {#each products as product, idx}
-        <tr class="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600">
+        <tr
+          class=" cursor-pointer border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600">
           <td class="w-4 p-4">
             <div class="flex items-center">
               <input

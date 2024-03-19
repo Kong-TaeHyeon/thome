@@ -15,7 +15,7 @@ export const actions = {
 
       const id = data.get("id");
       const status = data.get("status");
-      const answer = data.get("answer");
+      let answer = data.get("answer");
       const userId = data.get("userId");
 
       const contact = {

@@ -135,7 +135,7 @@
     </thead>
     <tbody>
       {#each coupons as coupon}
-        <tr class="hover:bg-gray-200">
+        <tr class="cursor-pointer hover:bg-gray-200">
           <td>
             <input
               on:click={() => toggleCouponSelection(coupon)}

@@ -68,12 +68,54 @@ class CouponRepository {
 
     return data;
   }
+  // 랜덤 넘버 발행.
+
+  generateRandomValue() {
+    var characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var randomValue = "";
+
+    for (var i = 0; i < 10; i++) {
+      var randomIndex = Math.floor(Math.random() * characters.length);
+      randomValue += characters[randomIndex];
+    }
+
+    return randomValue;
+  }
 
   async createCoupon(coupon) {
     const createdAt = new Date();
 
     coupon.createdAt = createdAt;
-    const { error } = await supabase.from("coupon").insert(coupon);
+
+    let codes = [];
+
+    for (let i = 1; i < coupon.quantity; i++) {
+      codes.push(this.generateRandomValue());
+    }
+
+    // 이미 존재하는 쿠폰이 있는지 확인.
+    let { data, error: searchErr } = await supabase.from("coupon").select("coupon").in("code", codes);
+
+    while (data) {
+      for (let i = 1; i < coupon.quantity; i++) {
+        codes.push(this.generateRandomValue());
+      }
+
+      let selectSearch = await supabase.from("coupon").select("coupon").in("code", codes);
+      data = selectSearch.data;
+    }
+
+    let coupons = [];
+
+    for (let i = 0; i < codes.length; i++) {
+      coupons.push({
+        code: codes[i],
+        goodsId: coupon.goodsId,
+        createdAt: createdAt,
+      });
+    }
+
+    const { error } = await supabase.from("coupon").insert(coupons);
 
     if (error) throw new Error(error.message);
 

@@ -2,12 +2,11 @@
   import { enhance } from "$app/forms";
   import { goto } from "$app/navigation";
 
-  let option = "email";
   let showResult = false;
   let items = [];
 
   let selectedGoods;
-  let code;
+  let quantity;
 
   const searchGoods = async (name) => {
     if (name.length > 0) {
@@ -32,7 +31,7 @@
       return;
     }
 
-    formData.append("code", code);
+    formData.append("quantity", quantity);
     formData.append("goods", selectedGoods.id);
 
     return async ({ result }) => {
@@ -58,8 +57,6 @@
       action="?/save"
       use:enhance={submitForm}
       class="flex w-[600px] flex-col items-center justify-center">
-      <div>Code</div>
-      <input type="text" bind:value={code} placeholder="Type Code" class="input input-bordered mb-4 w-full max-w-xs" />
       <div>Goods</div>
       <input
         type="text"
@@ -93,6 +90,12 @@
           </li>
         </ul>
       {/if}
+      <div>Quantity</div>
+      <input
+        type="text"
+        bind:value={quantity}
+        placeholder="발행할 쿠폰의 수량"
+        class="input input-bordered mb-4 w-full max-w-xs" />
       <button
         formaction="?/save"
         class="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"

@@ -5,11 +5,11 @@ export const actions = {
     try {
       const data = await request.formData();
 
-      const code = data.get("code");
+      const quantity = data.get("quantity");
       const goodsId = data.get("goods");
 
       const coupon = {
-        code: code,
+        quantity: quantity,
         goodsId: goodsId,
       };
 

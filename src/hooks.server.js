@@ -31,7 +31,8 @@ export const handle = async ({ event, resolve }) => {
   event.locals.getSession = async () => {
     const {
       data: { session },
-    } = await event.locals.sb.auth.getSession();
+    } = await event.locals.sb.auth.refreshSession();
+
     return session;
   };
 

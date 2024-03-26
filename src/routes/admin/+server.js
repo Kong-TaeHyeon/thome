@@ -18,13 +18,6 @@ export const DELETE = async ({ locals, request }) => {
 
     if (deleteUser) throw new Error(deleteUser.message);
 
-    // log In
-    // const { data: admin } = await supabase.from("admin").select("*").eq("id", adminId).maybeSingle();
-    // const { error } = await supabase.auth.signInWithPassword({
-    //   email: admin.email,
-    //   password: admin.password,
-    // });
-
     return json(true);
   } catch (error) {
     console.error(error.message);
